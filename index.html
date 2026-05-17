@@ -1,0 +1,3582 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إبداع — وكالة إبداعية متكاملة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@200;300;400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #ffffff;
+    --off-white: #f8f7f4;
+    --gray-50: #f5f4f1;
+    --gray-100: #eeede9;
+    --gray-200: #dddbd5;
+    --gray-300: #b8b5ac;
+    --gray-500: #6e6b62;
+    --gray-700: #3a3832;
+    --black: #111110;
+    --accent: #1a1a1a;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 32px;
+    --radius-xl: 48px;
+    --shadow-sm: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-md: 0 8px 40px rgba(0,0,0,0.10);
+    --shadow-lg: 0 24px 80px rgba(0,0,0,0.14);
+    --font-display: 'Alexandria', sans-serif;
+    --font-body: 'IBM Plex Sans Arabic', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--white);
+    color: var(--black);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--black);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s ease, background 0.3s, width 0.3s, height 0.3s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    width: 40px; height: 40px;
+    border: 1.5px solid rgba(0,0,0,0.35);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s cubic-bezier(.25,.46,.45,.94), width 0.3s, height 0.3s, border-color 0.3s;
+  }
+  body:has(a:hover) #cursor, body:has(button:hover) #cursor { width:20px; height:20px; }
+  body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 56px; height: 56px; }
+
+  /* ── LOADER ── */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--black);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+  }
+  #loader-logo {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -2px;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: loaderIn 0.8s cubic-bezier(.16,1,.3,1) 0.3s forwards;
+  }
+  #loader-bar-wrap {
+    width: 200px; height: 2px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 0.8s forwards;
+  }
+  #loader-bar {
+    height: 100%; width: 0%;
+    background: var(--gold);
+    border-radius: 99px;
+    animation: barFill 1.4s cubic-bezier(.77,0,.18,1) 0.9s forwards;
+  }
+  @keyframes loaderIn { to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { to { opacity:1; } }
+  @keyframes barFill { to { width:100%; } }
+  #loader.hide {
+    animation: loaderOut 0.9s cubic-bezier(.76,0,.24,1) forwards;
+  }
+  @keyframes loaderOut {
+    0% { opacity:1; transform:scaleY(1); transform-origin:bottom; }
+    100% { opacity:0; transform:scaleY(0); transform-origin:bottom; }
+  }
+
+  /* ── SCROLL PROGRESS ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    z-index: 5000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 24px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: all 0.5s cubic-bezier(.16,1,.3,1);
+  }
+  nav.scrolled {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 14px 48px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .nav-logo img {
+    height: 47px;
+    width: auto;
+    display: block;
+  }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 14px; font-weight: 400;
+    color: var(--gray-700);
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content:''; position:absolute; bottom:-4px; right:0;
+    width:0; height:1px; background:var(--black);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--black); }
+  .nav-links a:hover::after { width:100%; }
+  .nav-cta {
+    background: var(--black);
+    color: var(--white) !important;
+    padding: 10px 22px;
+    border-radius: 99px;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    transition: background 0.3s, transform 0.2s !important;
+  }
+  .nav-cta::after { display:none !important; }
+  .nav-cta:hover { background: var(--gray-700) !important; transform: scale(1.03); }
+
+  /* Mobile menu */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 24px; height: 2px;
+    background: var(--black);
+    border-radius: 99px;
+    transition: all 0.3s;
+  }
+  .nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-hamburger.active span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  .nav-mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .nav-mobile-menu.open { display: flex; opacity: 1; }
+  .nav-mobile-menu a {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    color: var(--black);
+    text-decoration: none;
+    letter-spacing: -1px;
+  }
+  .nav-mobile-menu .nav-cta-mobile {
+    background: var(--black);
+    color: var(--white);
+    padding: 14px 36px;
+    border-radius: 99px;
+    margin-top: 12px;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100svh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 120px 48px 20px;
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .hero-bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    opacity: 0;
+    animation: orbReveal 2s ease 2.6s forwards;
+  }
+  @keyframes orbReveal { to { opacity: 1; } }
+  .orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.12), transparent 70%);
+    top: -100px; right: -100px;
+  }
+  .orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(100,100,200,0.06), transparent 70%);
+    bottom: -50px; left: -80px;
+  }
+  .orb-3 {
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
+    top: 40%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: orbPulse 6s ease-in-out infinite, orbReveal 2s ease 2.6s forwards;
+  }
+  @keyframes orbPulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    50% { transform: translate(-50%,-50%) scale(1.3); }
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gray-50); border: 1px solid var(--gray-100);
+    border-radius: 99px; padding: 6px 16px;
+    font-size: 13px; font-weight: 400; color: var(--gray-500);
+    margin-bottom: 36px;
+    opacity: 0; transform: translateY(20px);
+    animation: revealUp 0.8s cubic-bezier(.16,1,.3,1) 2.4s forwards;
+  }
+  .hero-badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:0.5; transform:scale(1.4); }
+  }
+
+  .hero-headline {
+    font-family: var(--font-display);
+    font-size: clamp(52px, 8vw, 110px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -3px;
+    text-align: center;
+    color: var(--black);
+    max-width: 900px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-headline .line {
+    display: block;
+    opacity: 0; transform: translateY(60px);
+  }
+  .hero-headline .line-1 { animation: revealUp 1s cubic-bezier(.16,1,.3,1) 2.6s forwards; }
+  .hero-headline .line-2 { animation: revealUp 1s cubic-bezier(.16,1,.3,1) 2.75s forwards; }
+  .hero-headline .line-3 { animation: revealUp 1s cubic-bezier(.16,1,.3,1) 2.9s forwards; }
+  .hero-headline .accent-word {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--black);
+    font-style: italic;
+  }
+  .hero-headline .gold-word { color: var(--gold); }
+
+  .hero-sub {
+    font-size: clamp(15px, 1.8vw, 18px);
+    font-weight: 300;
+    color: var(--gray-500);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.8;
+    margin-top: 48px;
+    opacity: 0; transform: translateY(30px);
+    animation: revealUp 0.9s cubic-bezier(.16,1,.3,1) 3.1s forwards;
+  }
+
+  .hero-buttons {
+    display: flex; gap: 14px; margin-top: 44px;
+    opacity: 0; transform: translateY(30px);
+    animation: revealUp 0.9s cubic-bezier(.16,1,.3,1) 3.25s forwards;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .btn-primary {
+    background: var(--black);
+    color: var(--white);
+    padding: 16px 36px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 500;
+    border: none; cursor: none;
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1), box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::before {
+    content:''; position:absolute; inset:0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(110%);
+    transition: transform 0.5s cubic-bezier(.16,1,.3,1);
+    border-radius:99px;
+  }
+  .btn-primary:hover { transform: scale(1.04) translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+  .btn-primary:hover::before { transform: translateX(-110%); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--black);
+    padding: 16px 36px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 400;
+    border: 1.5px solid var(--gray-200);
+    cursor: none;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .btn-secondary:hover { border-color: var(--black); transform: scale(1.02); }
+
+  .hero-scroll {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    margin-top: 48px;
+    opacity: 0; animation: fadeIn 1s ease 3.6s forwards;
+    position: relative;
+    left: auto; bottom: auto; transform: none;
+  }
+  .hero-scroll span {
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gray-300);
+  }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--gray-300), transparent);
+    animation: scrollLinePulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollLinePulse {
+    0%,100% { opacity:1; transform:scaleY(1); transform-origin:top; }
+    50% { opacity:0.4; }
+  }
+
+  /* Hero floating shapes */
+  .hero-float {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    animation: floatReveal 1s ease var(--delay) forwards, floatAnim 6s ease-in-out var(--delay) infinite;
+  }
+  @keyframes floatReveal { to { opacity: var(--target-opacity, 1); } }
+  @keyframes floatAnim {
+    0%,100% { transform: translateY(0px) rotate(var(--rot, 0deg)); }
+    50% { transform: translateY(-20px) rotate(calc(var(--rot, 0deg) + 5deg)); }
+  }
+  .shape-ring {
+    width: 80px; height: 80px;
+    border: 2px solid rgba(201,168,76,0.3);
+    border-radius: 50%;
+    --delay: 3.4s; --rot: 0deg; --target-opacity: 0.8;
+    top: 20%; left: 8%;
+  }
+  .shape-dot-grid {
+    --delay: 3.6s; --target-opacity: 0.5;
+    top: 30%; right: 7%;
+    display: grid; grid-template-columns: repeat(4,8px); gap: 6px;
+    --rot: 15deg;
+  }
+  .shape-dot-grid span {
+    width:5px; height:5px; border-radius:50%;
+    background: var(--gray-300);
+    display: block;
+  }
+  .shape-line {
+    width: 120px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    --delay: 3.8s; --target-opacity: 0.6;
+    bottom: 25%; left: 6%;
+    --rot: -30deg;
+  }
+  .shape-square {
+    width: 50px; height: 50px;
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 10px;
+    --delay: 4s; --rot: 20deg; --target-opacity: 0.6;
+    bottom: 30%; right: 10%;
+  }
+
+  /* ── NUMBERS TICKER ── */
+  .stats-strip {
+    background: var(--black);
+    padding: 40px 48px;
+    display: flex; justify-content: center; gap: 0;
+    position: relative; overflow: hidden;
+  }
+  .stat-item {
+    flex: 1; text-align: center; padding: 0 40px;
+    border-right: 1px solid rgba(255,255,255,0.12);
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-item.in-view { opacity:1; transform:translateY(0); }
+  .stat-number {
+    font-family: var(--font-display);
+    font-size: clamp(36px,5vw,60px);
+    font-weight: 700; color: var(--white);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .stat-number .gold-plus { color: var(--gold); }
+  .stat-label {
+    font-size: 13px; font-weight: 300;
+    color: rgba(255,255,255,0.45);
+    margin-top: 8px; letter-spacing: 0.5px;
+  }
+
+  /* ── SECTIONS COMMON ── */
+  section { padding: 100px 48px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+  .section-label::before {
+    content:''; display:block; width:24px; height:1px; background:var(--gold);
+  }
+  h2.section-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700; letter-spacing: -2px;
+    line-height: 1.1; color: var(--black);
+  }
+
+  /* ── REVEAL ANIMATIONS ── */
+  @keyframes revealUp {
+    to { opacity:1; transform:translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(50px);
+    transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1);
+  }
+  .reveal.in-view { opacity:1; transform:translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* ── SERVICES ── */
+  #services { background: var(--off-white); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 60px;
+  }
+  .service-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 44px 40px;
+    border: 1px solid var(--gray-100);
+    cursor: none;
+    position: relative; overflow: hidden;
+    transition: transform 0.5s cubic-bezier(.16,1,.3,1), box-shadow 0.5s;
+  }
+  .service-card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.04), transparent);
+    opacity:0;
+    transition: opacity 0.4s;
+  }
+  .service-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+  .service-card:hover::before { opacity:1; }
+  .service-card:hover .service-icon { transform: scale(1.15) rotate(-5deg); }
+  .service-card.large { grid-column: span 2; }
+  .service-icon {
+    width: 52px; height: 52px;
+    background: var(--black);
+    border-radius: 14px;
+    display: flex; align-items:center; justify-content: center;
+    margin-bottom: 28px;
+    font-size: 22px;
+    color: #ffffff;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  .service-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 600;
+    letter-spacing: -0.5px; color: var(--black);
+    margin-bottom: 14px;
+  }
+  .service-desc {
+    font-size: 14px; font-weight: 300;
+    color: var(--gray-500); line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+  .service-tag {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    background: var(--gray-50);
+    border-radius: 99px;
+    color: var(--gray-500);
+    border: 1px solid var(--gray-100);
+  }
+  .service-arrow {
+    position: absolute; top: 44px; left: 40px;
+    font-size: 20px; color: var(--gray-200);
+    transition: color 0.3s, transform 0.3s;
+  }
+  .service-card:hover .service-arrow { color: var(--black); transform: translateX(-4px); }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  .about-visual {
+    position: relative; height: 480px;
+  }
+  .about-card {
+    position: absolute;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-100);
+    overflow: hidden;
+  }
+  .about-card-main {
+    inset: 0; display: flex; align-items: center; justify-content: center;
+    text-align: center; flex-direction: column;
+    background: var(--off-white);
+  }
+  .about-card-main-inner { position: relative; z-index: 1; padding: 40px; }
+  .about-big-num {
+    position: absolute; bottom: -20px; left: -10px;
+    font-family: var(--font-display);
+    font-size: 180px; font-weight: 800;
+    color: rgba(0,0,0,0.04);
+    line-height: 1; letter-spacing: -10px;
+    pointer-events: none;
+    user-select: none;
+  }
+  .about-card-float-1 {
+    width: 160px; padding: 20px 24px;
+    top: 24px; left: -30px;
+    animation: floatCard1 4s ease-in-out infinite;
+  }
+  .about-card-float-2 {
+    width: 160px; padding: 20px 24px;
+    bottom: 24px; right: -20px;
+    animation: floatCard2 5s ease-in-out infinite;
+  }
+  @keyframes floatCard1 {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-14px) rotate(-1deg); }
+  }
+  @keyframes floatCard2 {
+    0%,100% { transform: translateY(0) rotate(3deg); }
+    50% { transform: translateY(-10px) rotate(2deg); }
+  }
+  .about-float-label {
+    font-size: 11px; color: var(--gray-300); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .about-float-value {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700; color: var(--black);
+    letter-spacing: -0.5px;
+  }
+  .about-float-sub {
+    font-size: 12px; color: var(--gray-500); margin-top: 4px;
+  }
+  .about-content { padding-right: 20px; }
+  .about-text {
+    font-size: clamp(15px, 1.8vw, 18px);
+    font-weight: 300; color: var(--gray-700);
+    line-height: 1.9; margin-top: 28px;
+  }
+  .about-text strong { color: var(--black); font-weight: 600; }
+  .about-list {
+    list-style: none; margin-top: 36px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .about-list li {
+    display: flex; align-items: flex-start; gap: 14px;
+    font-size: 14px; color: var(--gray-700);
+  }
+  .about-list li::before {
+    content:''; display:block;
+    width: 20px; height: 20px; min-width:20px;
+    border-radius: 50%;
+    background: var(--black);
+    margin-top: 2px;
+  }
+
+  /* ── PORTFOLIO ── */
+  #portfolio { background: var(--off-white); }
+  .portfolio-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto;
+    gap: 20px;
+  }
+  .project-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    background: var(--gray-200);
+  }
+  .project-card:nth-child(1) { grid-column: span 7; height: 420px; }
+  .project-card:nth-child(2) { grid-column: span 5; height: 420px; }
+  .project-card:nth-child(3) { grid-column: span 4; height: 340px; }
+  .project-card:nth-child(4) { grid-column: span 8; height: 340px; }
+  .project-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.7s cubic-bezier(.16,1,.3,1);
+  }
+  .project-card:hover .project-bg { transform: scale(1.06); }
+  .project-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 32px;
+    opacity: 0.8;
+    transition: opacity 0.4s;
+  }
+  .project-card:hover .project-overlay { opacity: 1; }
+  .project-cat {
+    font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(255,255,255,0.6); margin-bottom: 8px;
+  }
+  .project-title {
+    font-family: var(--font-display);
+    font-size: clamp(18px,2.5vw,26px);
+    font-weight: 600; color: var(--white);
+    letter-spacing: -0.5px;
+    transform: translateY(10px);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  .project-card:hover .project-title { transform: translateY(0); }
+  .project-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(255,255,255,0.7);
+    margin-top: 12px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .project-card:hover .project-link { opacity:1; transform:translateY(0); }
+
+  /* ── TESTIMONIALS — static grid, no animation ── */
+  #testimonials {
+    background: var(--off-white);
+  }
+  .testi-header {
+    text-align: center;
+    margin-bottom: 56px;
+  }
+  .testi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .testi-card {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1), box-shadow 0.35s;
+  }
+  .testi-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+  }
+  .testi-stars {
+    color: var(--gold);
+    font-size: 15px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+  }
+  .testi-quote {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--gray-700);
+    line-height: 1.85;
+    flex: 1;
+    margin-bottom: 28px;
+  }
+  .testi-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-100);
+  }
+  .testi-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-100);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .testi-name {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 3px;
+  }
+  .testi-role {
+    font-size: 11px;
+    color: var(--gray-300);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── PROCESS ── */
+  #process { background: var(--black); }
+  #process .section-label { color: var(--gold-light); }
+  #process h2.section-title { color: var(--white); }
+  .process-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2px; margin-top: 60px;
+  }
+  .process-step {
+    padding: 44px 36px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    position: relative; overflow: hidden;
+    transition: background 0.4s;
+  }
+  .process-step:last-child { border-right: none; }
+  .process-step:hover { background: rgba(255,255,255,0.04); }
+  .process-step::before {
+    content: attr(data-num);
+    font-family: var(--font-display);
+    font-size: 80px; font-weight: 800;
+    color: rgba(255,255,255,0.04);
+    position: absolute; top: -10px; right: 20px;
+    letter-spacing: -4px; line-height: 1;
+    transition: color 0.4s;
+  }
+  .process-step:hover::before { color: rgba(255,255,255,0.07); }
+  .process-step-icon {
+    font-size: 28px; margin-bottom: 20px;
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  .process-step:hover .process-step-icon { transform: scale(1.2) rotate(-5deg); }
+  .process-step-title {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 600;
+    color: var(--white); margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .process-step-desc {
+    font-size: 13px; font-weight: 300;
+    color: rgba(255,255,255,0.45); line-height: 1.8;
+  }
+
+  /* ── CONTACT ── */
+  #contact { background: var(--white); }
+  .contact-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; margin-top: 60px; align-items: start;
+  }
+  .contact-tagline {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700; letter-spacing: -1.5px;
+    line-height: 1.2; color: var(--black);
+    margin-top: 20px;
+  }
+  .contact-tagline .highlight {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--black);
+    font-style: italic;
+  }
+  .contact-info { margin-top: 40px; display: flex; flex-direction: column; gap: 20px; }
+  .contact-info-item {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 14px; color: var(--gray-700);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-info-item:hover { color: var(--black); }
+  .contact-info-icon {
+    width: 40px; height: 40px;
+    border: 1px solid var(--gray-100);
+    border-radius: 12px;
+    display: flex; align-items:center; justify-content:center;
+    font-size: 16px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .contact-info-item:hover .contact-info-icon {
+    background: var(--black); border-color: var(--black);
+    filter: invert(1);
+  }
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-field {
+    position: relative;
+  }
+  .form-field label {
+    display: block;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gray-300); margin-bottom: 8px;
+  }
+  .form-field input, .form-field textarea, .form-field select {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    font-family: var(--font-body);
+    font-size: 14px; color: var(--black);
+    transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    outline: none;
+    appearance: none;
+  }
+  .form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+    border-color: var(--black);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(0,0,0,0.05);
+  }
+  .form-field textarea { resize: vertical; min-height: 120px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-submit {
+    background: var(--black); color: var(--white);
+    padding: 18px 40px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 500;
+    border: none; cursor: pointer; width: 100%;
+    margin-top: 8px;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  .form-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.2);
+    background: var(--gray-700);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--black);
+    padding: 80px 48px 40px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px; padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 700;
+    color: var(--white); letter-spacing: -1px;
+    margin-bottom: 16px;
+  }
+  .footer-tagline {
+    font-size: 13px; font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.8; max-width: 260px;
+  }
+  .footer-col-title {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 20px;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a {
+    font-size: 14px; font-weight: 300;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom {
+    padding-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy {
+    font-size: 12px; color: rgba(255,255,255,0.25);
+  }
+  .footer-socials { display: flex; gap: 16px; }
+  .footer-social {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex; align-items:center; justify-content:center;
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    transition: background 0.3s, border-color 0.3s, color 0.3s;
+  }
+  .footer-social:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.3);
+    color: var(--white);
+  }
+
+  /* ══════════════════════════════════════════════════
+     ── SOCIAL MEDIA DESIGNS SECTION ──
+  ══════════════════════════════════════════════════ */
+  #social-designs {
+    background: var(--white);
+  }
+  .social-section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 48px;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .social-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .social-card {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: var(--gray-100);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s;
+  }
+  .social-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+  }
+  .social-card-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+  }
+  .social-card:hover .social-card-bg { transform: scale(1.08); }
+  .social-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.35s;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 18px;
+  }
+  .social-card:hover .social-card-overlay { opacity: 1; }
+  .social-card-client {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .social-card-title {
+    font-family: var(--font-display);
+    font-size: 13px; font-weight: 600;
+    color: var(--white); letter-spacing: -0.3px;
+  }
+  .social-card-count {
+    font-size: 10px; color: rgba(255,255,255,0.6);
+    margin-top: 4px;
+  }
+  .social-card-zoom-icon {
+    position: absolute; top: 12px; left: 12px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--white);
+    opacity: 0; transform: scale(0.7);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .social-card:hover .social-card-zoom-icon { opacity: 1; transform: scale(1); }
+
+  /* ── SOCIAL PROJECT LIGHTBOX ── */
+  .social-lightbox {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 7000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s, visibility 0.35s;
+  }
+  .social-lightbox.active { opacity: 1; visibility: visible; }
+  .social-lightbox-box {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    width: 100%; max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(40px) scale(0.96);
+    transition: transform 0.45s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .social-lightbox.active .social-lightbox-box {
+    transform: translateY(0) scale(1);
+  }
+  .social-lightbox-header {
+    padding: 32px 36px 24px;
+    border-bottom: 1px solid var(--gray-100);
+    display: flex; justify-content: space-between; align-items: flex-start;
+    position: sticky; top: 0; background: var(--white);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    z-index: 2;
+  }
+  .social-lightbox-cat {
+    font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 6px;
+  }
+  .social-lightbox-title {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 800; letter-spacing: -1px; color: var(--black);
+  }
+  .social-lightbox-desc {
+    font-size: 13px; color: var(--gray-500);
+    margin-top: 6px; max-width: 440px; line-height: 1.7;
+  }
+  .social-lightbox-close {
+    width: 40px; height: 40px;
+    background: var(--gray-100);
+    border: none; border-radius: 50%;
+    font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-700); flex-shrink: 0;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .social-lightbox-close:hover { background: var(--gray-200); transform: rotate(90deg); }
+  .social-lightbox-gallery {
+    padding: 28px 36px 36px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .social-lightbox-item {
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    background: var(--gray-100);
+    cursor: zoom-in;
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+  }
+  .social-lightbox-item:hover { transform: scale(1.03); }
+  .social-lightbox-item.wide {
+    grid-column: span 2; aspect-ratio: 2 / 1;
+  }
+  .social-lightbox-item-bg {
+    position: absolute; inset: 0;
+  }
+  /* post type badge */
+  .social-post-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    border-radius: 99px; padding: 4px 10px;
+    font-size: 10px; letter-spacing: 1px;
+    color: rgba(255,255,255,0.85); text-transform: uppercase;
+  }
+
+  /* ── NOISE TEXTURE overlay ── */
+
+  /* Noise / grain on project cards */
+  .project-card::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 200px;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+  .project-overlay { z-index: 2; }
+
+  /* Misc utils */
+  .text-gold { color: var(--gold); }
+  .mt-auto { margin-top: auto; }
+  img { display:block; width:100%; height:100%; object-fit:cover; }
+
+  /* ═══════════════════════════════════════════
+     ── SERVICE REQUEST MODAL ──
+  ═══════════════════════════════════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 8000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  .modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .modal-box {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(30px) scale(0.96);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+    position: relative;
+  }
+  .modal-overlay.active .modal-box {
+    transform: translateY(0) scale(1);
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 28px;
+  }
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.5px; color: var(--black);
+  }
+  .modal-subtitle {
+    font-size: 13px; color: var(--gray-500); margin-top: 4px;
+  }
+  .modal-close {
+    width: 36px; height: 36px;
+    background: var(--gray-50);
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--gray-700);
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .modal-close:hover { background: var(--gray-100); }
+  .modal-form { display: flex; flex-direction: column; gap: 18px; }
+  .modal-field label {
+    display: block;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gray-500); margin-bottom: 8px;
+  }
+  .modal-field input, .modal-field select {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 14px; color: var(--black);
+    outline: none;
+    appearance: none;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .modal-field input:focus, .modal-field select:focus {
+    border-color: var(--black);
+    background: var(--white);
+  }
+  .phone-input-wrap {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .phone-prefix {
+    background: var(--gray-100);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px; color: var(--gray-700);
+    font-family: var(--font-body);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .phone-input-wrap input {
+    flex: 1;
+  }
+  .modal-label-group {
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gray-500); margin-bottom: 12px;
+    display: block;
+  }
+  .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .checkbox-item {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 13px; color: var(--gray-700);
+  }
+  .checkbox-item:has(input:checked) {
+    border-color: var(--black);
+    background: var(--black);
+    color: var(--white);
+  }
+  .checkbox-item input[type="checkbox"] {
+    display: none;
+  }
+  .modal-buttons {
+    display: flex; gap: 12px; margin-top: 8px;
+  }
+  .modal-submit {
+    flex: 1;
+    background: var(--black); color: var(--white);
+    padding: 16px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 500;
+    border: none; cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .modal-submit:hover { background: var(--gray-700); transform: translateY(-2px); }
+  .modal-cancel {
+    background: transparent; color: var(--gray-700);
+    padding: 16px 24px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    border: 1.5px solid var(--gray-200);
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .modal-cancel:hover { border-color: var(--gray-700); }
+  .modal-success {
+    text-align: center; padding: 20px 0;
+    display: none;
+  }
+  .modal-success-icon {
+    font-size: 48px; margin-bottom: 16px;
+  }
+  .modal-success-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--black); margin-bottom: 8px;
+  }
+  .modal-success-text {
+    font-size: 14px; color: var(--gray-500); line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════
+     ── PAGE VIEWS (Portfolio, Detail, Admin) ──
+  ═══════════════════════════════════════════ */
+  .page-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--white);
+    z-index: 3000;
+    overflow-y: auto;
+    animation: pageSlideIn 0.5s cubic-bezier(.16,1,.3,1);
+  }
+  .page-view.active { display: block; }
+  @keyframes pageSlideIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page-nav {
+    position: sticky; top: 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--gray-100);
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .page-back {
+    display: flex; align-items: center; gap: 10px;
+    background: none; border: none;
+    font-family: var(--font-body);
+    font-size: 14px; color: var(--gray-700);
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 8px 0;
+  }
+  .page-back:hover { color: var(--black); }
+  .page-back-icon { font-size: 18px; }
+  .page-logo {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -1px; color: var(--black);
+  }
+  .page-content { padding: 60px 48px; max-width: 1400px; margin: 0 auto; }
+
+  /* ── PORTFOLIO PAGE ── */
+  .portfolio-page-header {
+    margin-bottom: 48px;
+  }
+  .portfolio-page-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800; letter-spacing: -3px;
+    color: var(--black); line-height: 1;
+    margin-top: 12px;
+  }
+  .portfolio-page-header p {
+    font-size: 16px; color: var(--gray-500);
+    margin-top: 16px; max-width: 500px; line-height: 1.7;
+  }
+
+  /* Search + Filters */
+  .portfolio-controls {
+    display: flex; gap: 16px; align-items: center;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .portfolio-search-wrap {
+    position: relative; flex: 1; min-width: 220px;
+  }
+  .portfolio-search {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 99px;
+    padding: 12px 20px 12px 44px;
+    font-family: var(--font-body);
+    font-size: 14px; color: var(--black);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .portfolio-search:focus { border-color: var(--black); }
+  .portfolio-search-icon {
+    position: absolute;
+    left: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px; color: var(--gray-300);
+    pointer-events: none;
+  }
+  .filter-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .filter-tab {
+    padding: 10px 20px;
+    border-radius: 99px;
+    border: 1.5px solid var(--gray-200);
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13px; color: var(--gray-700);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+  }
+
+  /* Portfolio all-projects grid */
+  .all-projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .all-project-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--gray-100);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), box-shadow 0.4s;
+    border: 1px solid var(--gray-100);
+  }
+  .all-project-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .all-project-img {
+    height: 220px;
+    position: relative;
+    overflow: hidden;
+  }
+  .all-project-img-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s cubic-bezier(.16,1,.3,1);
+  }
+  .all-project-card:hover .all-project-img-bg { transform: scale(1.06); }
+  .all-project-body {
+    padding: 24px;
+    background: var(--white);
+  }
+  .all-project-cat {
+    font-size: 11px; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .all-project-title {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.5px; color: var(--black);
+    margin-bottom: 10px;
+  }
+  .all-project-desc {
+    font-size: 13px; color: var(--gray-500);
+    line-height: 1.7; margin-bottom: 20px;
+  }
+  .all-project-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--black); color: var(--white);
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-size: 13px; font-weight: 500;
+    border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .all-project-btn:hover { background: var(--gray-700); transform: scale(1.03); }
+  .all-project-card.hidden { display: none; }
+
+  /* No results */
+  .no-results {
+    grid-column: 1/-1;
+    text-align: center; padding: 80px 0;
+    color: var(--gray-500);
+  }
+  .no-results-icon { font-size: 48px; margin-bottom: 16px; }
+  .no-results-text { font-size: 16px; }
+
+  /* ── PROJECT DETAIL PAGE ── */
+  .detail-hero {
+    height: 420px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 60px;
+  }
+  .detail-hero-bg {
+    position: absolute; inset: 0;
+  }
+  .detail-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2));
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 48px;
+  }
+  .detail-cat {
+    font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .detail-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 5vw, 60px);
+    font-weight: 800; letter-spacing: -2px;
+    color: var(--white); line-height: 1.1;
+  }
+  .detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .detail-desc-title {
+    font-family: var(--font-display);
+    font-size: 24px; font-weight: 700;
+    letter-spacing: -0.5px; color: var(--black);
+    margin-bottom: 16px;
+  }
+  .detail-desc-text {
+    font-size: 15px; color: var(--gray-700);
+    line-height: 1.9;
+  }
+  .detail-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 40px;
+  }
+  .detail-gallery-item {
+    height: 180px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+  }
+  .detail-gallery-item:first-child { grid-column: span 2; height: 240px; }
+  .detail-gallery-bg {
+    position: absolute; inset: 0;
+  }
+  .detail-sidebar { position: sticky; top: 100px; }
+  .detail-info-card {
+    background: var(--off-white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .detail-info-title {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gray-300); margin-bottom: 16px;
+  }
+  .detail-info-list { display: flex; flex-direction: column; gap: 14px; }
+  .detail-info-row {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 12px;
+  }
+  .detail-info-label {
+    font-size: 13px; color: var(--gray-500);
+    flex-shrink: 0;
+  }
+  .detail-info-value {
+    font-size: 13px; font-weight: 500; color: var(--black);
+    text-align: left;
+  }
+  .detail-stats-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 12px; margin-top: 8px;
+  }
+  .detail-stat {
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+  }
+  .detail-stat-num {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 800;
+    color: var(--black); letter-spacing: -1px;
+  }
+  .detail-stat-label {
+    font-size: 11px; color: var(--gray-500);
+    margin-top: 4px;
+  }
+  .detail-cta-card {
+    background: var(--black);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+  }
+  .detail-cta-title {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    color: var(--white); letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .detail-cta-text {
+    font-size: 13px; color: rgba(255,255,255,0.55);
+    line-height: 1.7; margin-bottom: 24px;
+  }
+  .detail-cta-btn {
+    width: 100%;
+    background: var(--gold); color: var(--black);
+    padding: 16px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 14px; font-weight: 600;
+    border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .detail-cta-btn:hover { background: var(--gold-light); transform: scale(1.02); }
+
+  /* ── ADMIN DASHBOARD ── */
+  .admin-login {
+    max-width: 420px; margin: 80px auto;
+    background: var(--white);
+    border: 1px solid var(--gray-100);
+    border-radius: var(--radius-xl);
+    padding: 48px 40px;
+    box-shadow: var(--shadow-md);
+  }
+  .admin-login h2 {
+    font-family: var(--font-display);
+    font-size: 28px; font-weight: 800;
+    letter-spacing: -1px; color: var(--black);
+    margin-bottom: 8px;
+  }
+  .admin-login p {
+    font-size: 14px; color: var(--gray-500); margin-bottom: 32px;
+  }
+  .admin-field { margin-bottom: 16px; }
+  .admin-field label {
+    display: block;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gray-500); margin-bottom: 8px;
+  }
+  .admin-field input {
+    width: 100%;
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 14px; color: var(--black);
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .admin-field input:focus { border-color: var(--black); }
+  .admin-login-btn {
+    width: 100%;
+    background: var(--black); color: var(--white);
+    padding: 16px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 500;
+    border: none; cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.3s;
+  }
+  .admin-login-btn:hover { background: var(--gray-700); }
+  .admin-error {
+    color: #e55; font-size: 13px;
+    margin-top: 12px; text-align: center;
+    display: none;
+  }
+
+  .admin-dashboard { display: none; }
+  .admin-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px; flex-wrap: wrap; gap: 16px;
+  }
+  .admin-header h2 {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 800;
+    letter-spacing: -1.5px; color: var(--black);
+  }
+  .admin-header p { font-size: 14px; color: var(--gray-500); margin-top: 4px; }
+  .admin-logout {
+    background: none; border: 1.5px solid var(--gray-200);
+    border-radius: 99px; padding: 10px 20px;
+    font-family: var(--font-body); font-size: 13px;
+    color: var(--gray-700); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .admin-logout:hover { border-color: var(--black); color: var(--black); }
+  .admin-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 40px;
+  }
+  .admin-stat-card {
+    background: var(--off-white);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    border: 1px solid var(--gray-100);
+  }
+  .admin-stat-label {
+    font-size: 12px; color: var(--gray-500); margin-bottom: 8px;
+  }
+  .admin-stat-num {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 800;
+    letter-spacing: -1px; color: var(--black);
+  }
+  .admin-requests-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+  }
+  .admin-requests-title {
+    font-family: var(--font-display);
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.5px; color: var(--black);
+  }
+  .admin-refresh {
+    background: none; border: 1.5px solid var(--gray-200);
+    border-radius: 99px; padding: 8px 16px;
+    font-size: 13px; cursor: pointer;
+    transition: all 0.2s; font-family: var(--font-body);
+    color: var(--gray-700);
+  }
+  .admin-refresh:hover { border-color: var(--black); color: var(--black); }
+  .admin-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--gray-100);
+  }
+  .admin-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .admin-table th {
+    background: var(--gray-50);
+    padding: 14px 18px;
+    text-align: right;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--gray-500);
+    border-bottom: 1px solid var(--gray-100);
+    white-space: nowrap;
+  }
+  .admin-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+    vertical-align: middle;
+  }
+  .admin-table tr:last-child td { border-bottom: none; }
+  .admin-table tr:hover td { background: var(--gray-50); }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; border-radius: 99px;
+    font-size: 11px; font-weight: 500;
+  }
+  .status-new { background: rgba(201,168,76,0.15); color: #8b6914; }
+  .status-contacted { background: rgba(34,197,94,0.12); color: #16a34a; }
+  .admin-action-btn {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-family: var(--font-body);
+    font-size: 11px; font-weight: 500;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 6px;
+  }
+  .btn-mark {
+    border-color: #16a34a; color: #16a34a; background: transparent;
+  }
+  .btn-mark:hover { background: #16a34a; color: white; }
+  .btn-delete {
+    border-color: #e55; color: #e55; background: transparent;
+  }
+  .btn-delete:hover { background: #e55; color: white; }
+  .admin-empty {
+    text-align: center; padding: 60px;
+    color: var(--gray-500);
+  }
+  .admin-empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .admin-loading {
+    text-align: center; padding: 40px;
+    color: var(--gray-500); font-size: 14px;
+  }
+
+  /* ── SUPABASE CONFIG NOTICE ── */
+  .supabase-notice {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.05));
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    font-size: 13px; color: var(--gray-700);
+    line-height: 1.7;
+  }
+  .supabase-notice strong { color: var(--black); }
+  .supabase-notice code {
+    background: var(--gray-100); padding: 2px 6px;
+    border-radius: 4px; font-size: 12px;
+    font-family: monospace;
+  }
+
+  /* ═══════════════════════════════════════════
+     RESPONSIVE
+  ═══════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    nav { padding: 18px 24px; }
+    nav.scrolled { padding: 12px 24px; }
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; }
+    section { padding: 72px 24px; }
+    #hero { padding: 100px 24px 70px; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .service-card.large { grid-column: span 1; }
+    .portfolio-grid { grid-template-columns: 1fr 1fr; }
+    .project-card { grid-column: span 1 !important; height: 260px !important; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+    .about-visual { height: 320px; }
+    .stats-strip { gap: 0; padding: 32px 24px; }
+    .stat-item { padding: 0 16px; }
+    .process-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .hero-float { display:none; }
+    .form-row { grid-template-columns: 1fr; }
+    .portfolio-header { flex-direction: column; align-items: flex-start; }
+
+    .social-grid { grid-template-columns: repeat(2, 1fr); }
+    .social-lightbox-gallery { grid-template-columns: repeat(2, 1fr); padding: 20px 24px 28px; }
+    .social-lightbox-item.wide { grid-column: span 2; }
+    .social-lightbox-header { padding: 24px 24px 18px; }
+    .social-lightbox-box { border-radius: var(--radius-lg); }
+    .testi-grid { grid-template-columns: 1fr 1fr; }
+    /* Mobile hero-scroll: relative flow, centered under buttons */
+    .hero-scroll {
+      margin-top: 36px;
+      position: relative;
+      left: auto; bottom: auto; transform: none;
+    }
+
+    /* Page views mobile */
+    .page-nav { padding: 16px 24px; }
+    .page-content { padding: 32px 24px; }
+    .all-projects-grid { grid-template-columns: 1fr 1fr; }
+    .detail-layout { grid-template-columns: 1fr; }
+    .detail-sidebar { position: static; }
+    .detail-hero { height: 280px; border-radius: var(--radius-lg); }
+    .admin-stats { grid-template-columns: 1fr 1fr; }
+    .portfolio-controls { flex-direction: column; align-items: stretch; }
+    .portfolio-search-wrap { min-width: unset; }
+  }
+
+  @media (max-width: 600px) {
+    .social-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .social-lightbox-gallery { grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
+    .all-projects-grid { grid-template-columns: 1fr; }
+    .detail-gallery { grid-template-columns: 1fr; }
+    .detail-gallery-item:first-child { grid-column: span 1; }
+    .admin-stats { grid-template-columns: 1fr 1fr; }
+    .stats-strip { flex-wrap: wrap; }
+    .stat-item { flex: 0 0 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.12); padding: 24px; }
+    .modal-box { padding: 28px 24px; }
+    .checkbox-group { flex-direction: column; }
+    .modal-buttons { flex-direction: column-reverse; }
+    .page-nav { padding: 14px 16px; }
+    .page-content { padding: 24px 16px; }
+    footer { padding: 60px 24px 32px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    nav { padding: 14px 20px; }
+    .hero-headline { letter-spacing: -1.5px; }
+    .admin-stats { grid-template-columns: 1fr 1fr; }
+
+    /* ── MOBILE: "اسحب للأسفل" fix ── */
+    .hero-scroll {
+      margin-top: 36px;
+    }
+
+    /* ── MOBILE: "نصنع المستقبل" hero headline font reduction ── */
+    .hero-headline {
+      font-size: clamp(36px, 11vw, 52px);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    #hero {
+      padding: 90px 20px 60px;
+      justify-content: flex-start;
+      padding-top: 110px;
+    }
+
+    /* ── MOBILE: Services cards redesign ── */
+    .services-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 40px;
+    }
+    .service-card.large { grid-column: span 1; }
+    .service-card {
+      padding: 28px 24px;
+    }
+    .service-icon {
+      width: 44px; height: 44px;
+      font-size: 18px;
+      margin-bottom: 18px;
+    }
+    .service-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .service-desc {
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .service-tags { gap: 6px; }
+    .service-tag {
+      font-size: 10px;
+      padding: 3px 10px;
+    }
+    .service-arrow { top: 28px; left: 24px; }
+
+    /* ── MOBILE: Portfolio cards — 1 per row, smaller text ── */
+    .portfolio-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .project-card { grid-column: span 1 !important; height: 220px !important; }
+    .project-title { font-size: 16px; }
+    .project-cat { font-size: 10px; }
+    .project-overlay { padding: 20px; }
+
+    /* ── Testimonials grid: 1 column on mobile ── */
+    .testi-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <div id="loader-logo">إبداع</div>
+  <div id="loader-bar-wrap"><div id="loader-bar"></div></div>
+</div>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Scroll Progress -->
+<div id="progress-bar"></div>
+
+<!-- ══════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo" onclick="showHome()"><img src="pictures/logo/burja.png" alt="شعار الموقع" /></a>
+  <ul class="nav-links">
+    <li><a href="#services" onclick="showHome()">خدماتنا</a></li>
+    <li><a href="#about" onclick="showHome()">من نحن</a></li>
+    <li><a href="#portfolio" onclick="showHome()">أعمالنا</a></li>
+    <li><a href="#social-designs" onclick="showHome()">سوشيال ميديا</a></li>
+    <li><a href="#testimonials" onclick="showHome()">آراء العملاء</a></li>
+    <li><a href="#" class="nav-cta" onclick="openModal(event)">تواصل معنا</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="closeMobileMenu(); showHome();">خدماتنا</a>
+  <a href="#about" onclick="closeMobileMenu(); showHome();">من نحن</a>
+  <a href="#portfolio" onclick="closeMobileMenu(); showHome();">أعمالنا</a>
+  <a href="#social-designs" onclick="closeMobileMenu(); showHome();">سوشيال ميديا</a>
+  <a href="#testimonials" onclick="closeMobileMenu(); showHome();">آراء العملاء</a>
+  <a href="#" class="nav-cta-mobile" onclick="closeMobileMenu(); openModal(event);">تواصل معنا</a>
+</div>
+
+<!-- ══════════════════════════════════════
+     HOME PAGE CONTENT
+═══════════════════════════════════════ -->
+<div id="homePage">
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg-orb orb-1"></div>
+  <div class="hero-bg-orb orb-2"></div>
+  <div class="hero-bg-orb orb-3"></div>
+
+  <div class="hero-float shape-ring"></div>
+  <div class="hero-float shape-dot-grid">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <div class="hero-float shape-line"></div>
+  <div class="hero-float shape-square"></div>
+
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    متاحون للمشاريع الجديدة
+  </div>
+
+  <h1 class="hero-headline">
+    <span class="line line-1">نصنع تجارب</span>
+    <span class="line line-2"><em class="accent-word">رقمية</em> <span class="gold-word">استثنائية</span></span>
+    <span class="line line-3">تبقى في الذاكرة</span>
+  </h1>
+
+  <p class="hero-sub">
+    وكالة إبداعية متكاملة تجمع بين الاستراتيجية والتصميم والتقنية لبناء علامات تجارية تفوق التوقعات
+  </p>
+
+  <div class="hero-buttons">
+    <button class="btn-primary" onclick="document.getElementById('portfolio').scrollIntoView({behavior:'smooth'})">
+      استعرض أعمالنا
+    </button>
+    <button class="btn-secondary" onclick="openModal(event)">
+      ابدأ مشروعك
+    </button>
+  </div>
+
+  <div class="hero-scroll">
+    <span>اسحب للأسفل</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item reveal">
+    <div class="stat-number"><span class="counter" data-target="180">0</span><span class="gold-plus">+</span></div>
+    <div class="stat-label">مشروع منجز</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-1">
+    <div class="stat-number"><span class="counter" data-target="95">0</span><span class="gold-plus">%</span></div>
+    <div class="stat-label">رضا العملاء</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-2">
+    <div class="stat-number"><span class="counter" data-target="12">0</span><span class="gold-plus">+</span></div>
+    <div class="stat-label">سنة خبرة</div>
+  </div>
+  <div class="stat-item reveal reveal-delay-3">
+    <div class="stat-number"><span class="counter" data-target="40">0</span><span class="gold-plus">+</span></div>
+    <div class="stat-label">جائزة دولية</div>
+  </div>
+</div>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="reveal">
+    <div class="section-label">خدماتنا</div>
+    <h2 class="section-title">نقدم حلولاً<br>إبداعية متكاملة</h2>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card large reveal reveal-delay-1">
+      <div class="service-icon">✦</div>
+      <div class="service-title">الهوية البصرية والعلامة التجارية</div>
+      <div class="service-desc">نبني هويات بصرية استراتيجية تعكس جوهر علامتك التجارية وتتحدث بلغة جمهورك. من المفهوم إلى التطبيق الكامل على جميع النقاط اللمسية.</div>
+      <div class="service-tags">
+        <span class="service-tag">الشعار</span>
+        <span class="service-tag">دليل الهوية</span>
+        <span class="service-tag">المطبوعات</span>
+        <span class="service-tag">التغليف</span>
+      </div>
+      <div class="service-arrow">←</div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-icon">◈</div>
+      <div class="service-title">تصميم تجربة المستخدم</div>
+      <div class="service-desc">واجهات رقمية تجمع بين الجمال والوظيفة لخلق تجارب مستخدم لا تُنسى.</div>
+      <div class="service-tags">
+        <span class="service-tag">UX Research</span>
+        <span class="service-tag">UI Design</span>
+        <span class="service-tag">Prototyping</span>
+      </div>
+      <div class="service-arrow">←</div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-1">
+      <div class="service-icon">⬡</div>
+      <div class="service-title">تطوير المواقع والتطبيقات</div>
+      <div class="service-desc">مواقع وتطبيقات سريعة وأنيقة مبنية بأحدث التقنيات لضمان أفضل أداء وتجربة.</div>
+      <div class="service-tags">
+        <span class="service-tag">Next.js</span>
+        <span class="service-tag">React</span>
+        <span class="service-tag">Mobile</span>
+      </div>
+      <div class="service-arrow">←</div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-2">
+      <div class="service-icon">◎</div>
+      <div class="service-title">الاستراتيجية الرقمية</div>
+      <div class="service-desc">نضع خارطة طريق رقمية واضحة تحول أهدافك إلى نتائج قابلة للقياس.</div>
+      <div class="service-tags">
+        <span class="service-tag">SEO</span>
+        <span class="service-tag">المحتوى</span>
+        <span class="service-tag">التحليلات</span>
+      </div>
+      <div class="service-arrow">←</div>
+    </div>
+
+    <div class="service-card reveal reveal-delay-3">
+      <div class="service-icon">⬟</div>
+      <div class="service-title">التصوير والإنتاج الإبداعي</div>
+      <div class="service-desc">محتوى مرئي احترافي يرفع من قيمة علامتك ويخاطب الجمهور بشكل عاطفي عميق.</div>
+      <div class="service-tags">
+        <span class="service-tag">التصوير</span>
+        <span class="service-tag">الفيديو</span>
+        <span class="service-tag">الموشن</span>
+      </div>
+      <div class="service-arrow">←</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-content reveal">
+      <div class="section-label">من نحن</div>
+      <h2 class="section-title">نؤمن بأن<br>التصميم يغيّر<br>الواقع</h2>
+      <p class="about-text">
+        نحن فريق من <strong>المبدعين والمفكرين والمطورين</strong> الذين يجمعهم شغف واحد: تحويل الأفكار إلى تجارب رقمية تترك أثراً حقيقياً.
+        <br><br>
+        منذ تأسيسنا، ساعدنا أكثر من <strong>180 علامة تجارية</strong> في المنطقة وحول العالم على بناء حضور رقمي قوي يعكس قيمها ويحقق أهدافها.
+      </p>
+      <ul class="about-list">
+        <li>نهج استراتيجي يبدأ بفهم عميق لعملك وجمهورك</li>
+        <li>تصميم مدروس يجمع بين الجمال والفاعلية</li>
+        <li>شراكة حقيقية تتجاوز تسليم المشروع</li>
+      </ul>
+    </div>
+
+    <div class="about-visual reveal reveal-delay-2">
+      <div class="about-card about-card-main">
+        <div class="about-card-main-inner">
+          <div class="section-label" style="justify-content:center">إبداع بلا حدود</div>
+          <div style="font-family:var(--font-display);font-size:72px;font-weight:800;line-height:1;letter-spacing:-4px;color:var(--black);margin-top:12px">نصنع<br>المستقبل</div>
+          <div style="width:40px;height:3px;background:var(--gold);border-radius:99px;margin:20px auto 0"></div>
+        </div>
+        <div class="about-big-num">إب</div>
+      </div>
+      <div class="about-card about-card-float-1">
+        <div class="about-float-label">نسبة الرضا</div>
+        <div class="about-float-value">95%</div>
+        <div class="about-float-sub">من عملائنا يعودون</div>
+      </div>
+      <div class="about-card about-card-float-2">
+        <div class="about-float-label">سنوات الخبرة</div>
+        <div class="about-float-value">12+</div>
+        <div class="about-float-sub">في السوق الرقمي</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PORTFOLIO ── -->
+<section id="portfolio">
+  <div class="portfolio-header">
+    <div class="reveal">
+      <div class="section-label">أعمالنا</div>
+      <h2 class="section-title">مشاريع تتحدث<br>عن نفسها</h2>
+    </div>
+    <button class="btn-secondary reveal reveal-delay-2" onclick="showPortfolioPage()">عرض كل الأعمال</button>
+  </div>
+
+  <div class="portfolio-grid">
+    <div class="project-card reveal" onclick="showProjectDetail(0)">
+      <div class="project-bg" style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)"></div>
+      <div class="project-overlay">
+        <div class="project-cat">هوية بصرية · استراتيجية</div>
+        <div class="project-title">نوفا للتقنية المالية</div>
+        <div class="project-link">استعراض المشروع →</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-1" onclick="showProjectDetail(1)">
+      <div class="project-bg" style="background:linear-gradient(135deg,#2d1b69,#11998e,#38ef7d)"></div>
+      <div class="project-overlay">
+        <div class="project-cat">تصميم رقمي · تطوير</div>
+        <div class="project-title">أطلس للعقارات الفاخرة</div>
+        <div class="project-link">استعراض المشروع →</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-2" onclick="showProjectDetail(2)">
+      <div class="project-bg" style="background:linear-gradient(135deg,#c9a84c,#8b6914,#5a4010)"></div>
+      <div class="project-overlay">
+        <div class="project-cat">تغليف · هوية</div>
+        <div class="project-title">ذهب للمجوهرات</div>
+        <div class="project-link">استعراض المشروع →</div>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-1" onclick="showProjectDetail(3)">
+      <div class="project-bg" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a,#2d2d2d)"></div>
+      <div class="project-overlay">
+        <div class="project-cat">موقع · تجربة مستخدم</div>
+        <div class="project-title">ميدان للخدمات اللوجستية</div>
+        <div class="project-link">استعراض المشروع →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SOCIAL MEDIA DESIGNS ── -->
+<section id="social-designs">
+  <div class="social-section-header">
+    <div class="reveal">
+      <div class="section-label">تصاميم سوشيال ميديا</div>
+      <h2 class="section-title">محتوى رقمي<br>يصنع الأثر</h2>
+      <p class="reveal reveal-delay-2" style="max-width:320px;font-size:14px;color:var(--gray-500);line-height:1.8;margin-top:16px">
+        تصاميم منشورات احترافية لمنصات التواصل الاجتماعي — انقر على أي مشروع لاستعراض كامل الحملة
+      </p>
+    </div>
+  </div>
+
+  <div class="social-grid" id="socialGrid">
+    <!-- Injected by JS -->
+  </div>
+</section>
+
+<!-- SOCIAL LIGHTBOX -->
+<div class="social-lightbox" id="socialLightbox" onclick="handleSocialLightboxOverlay(event)">
+  <div class="social-lightbox-box" id="socialLightboxBox">
+    <div class="social-lightbox-header">
+      <div>
+        <div class="social-lightbox-cat" id="slbCat"></div>
+        <div class="social-lightbox-title" id="slbTitle"></div>
+        <div class="social-lightbox-desc" id="slbDesc"></div>
+      </div>
+      <button class="social-lightbox-close" onclick="closeSocialLightbox()">✕</button>
+    </div>
+    <div class="social-lightbox-gallery" id="slbGallery"></div>
+  </div>
+</div>
+
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="testi-header reveal">
+    <div class="section-label" style="justify-content:center;margin:0 auto 16px">آراء العملاء</div>
+    <h2 class="section-title">يقولون عنّا</h2>
+  </div>
+  <div class="testi-grid" id="testiGrid">
+    <!-- Injected by JS — static, no animation -->
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section id="process">
+  <div class="reveal" style="text-align:center">
+    <div class="section-label">كيف نعمل</div>
+    <h2 class="section-title">عملية مدروسة<br>لنتائج استثنائية</h2>
+  </div>
+
+  <div class="process-grid">
+    <div class="process-step reveal" data-num="01">
+      <div class="process-step-icon">🔍</div>
+      <div class="process-step-title">الاكتشاف والفهم</div>
+      <div class="process-step-desc">نبدأ بفهم عميق لأهدافك وجمهورك والسوق الذي تعمل فيه لبناء أساس استراتيجي متين.</div>
+    </div>
+    <div class="process-step reveal reveal-delay-1" data-num="02">
+      <div class="process-step-icon">💡</div>
+      <div class="process-step-title">التفكير والاستراتيجية</div>
+      <div class="process-step-desc">نحول الأفكار إلى خارطة طريق واضحة تحدد الاتجاه الإبداعي والتقني للمشروع.</div>
+    </div>
+    <div class="process-step reveal reveal-delay-2" data-num="03">
+      <div class="process-step-icon">✏️</div>
+      <div class="process-step-title">التصميم والبناء</div>
+      <div class="process-step-desc">نصمم ونطور بشكل متكامل مع ضمان جودة كل تفصيلة وتحسين مستمر بناءً على التغذية الراجعة.</div>
+    </div>
+    <div class="process-step reveal reveal-delay-3" data-num="04">
+      <div class="process-step-icon">🚀</div>
+      <div class="process-step-title">الإطلاق والنمو</div>
+      <div class="process-step-desc">نطلق مشروعك بثقة ونواصل دعمك وتطويره لتحقيق نمو مستدام وقابل للقياس.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="reveal">
+      <div class="section-label">تواصل معنا</div>
+      <h2 class="contact-tagline">هل أنت مستعد<br>لمشروع <span class="highlight">استثنائي؟</span></h2>
+      <p class="about-text" style="max-width:400px">
+        نحن هنا لنحول رؤيتك إلى واقع. أخبرنا عن مشروعك وسنتواصل معك خلال 24 ساعة.
+      </p>
+      <div class="contact-info">
+        <a href="mailto:soufiane@rhafes.com" class="contact-info-item">
+          <span class="contact-info-icon">✉️</span>
+          soufiane@rhafes.com
+        </a>
+        <a href="tel:+97450097720" class="contact-info-item">
+          <span class="contact-info-icon">📱</span>
+          +974 5009 7720
+        </a>
+        <div class="contact-info-item">
+          <span class="contact-info-icon">📍</span>
+          الدوحة، قطر
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2">
+      <div class="contact-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label>الاسم الكامل</label>
+            <input type="text" placeholder="محمد أحمد" />
+          </div>
+          <div class="form-field">
+            <label>البريد الإلكتروني</label>
+            <input type="email" placeholder="hello@example.com" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label>الخدمة المطلوبة</label>
+          <select>
+            <option value="">اختر الخدمة</option>
+            <option>الهوية البصرية</option>
+            <option>تصميم المواقع</option>
+            <option>تطوير التطبيقات</option>
+            <option>الاستراتيجية الرقمية</option>
+            <option>التصوير والإنتاج</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>تفاصيل المشروع</label>
+          <textarea placeholder="أخبرنا عن مشروعك، أهدافه، والميزانية التقريبية..."></textarea>
+        </div>
+        <button class="form-submit" onclick="openModal(event)">إرسال الرسالة ✦</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">إبداع</div>
+      <p class="footer-tagline">وكالة إبداعية متكاملة نصنع تجارب رقمية استثنائية تجمع بين الفن والتقنية.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">الشركة</div>
+      <ul class="footer-links">
+        <li><a href="#">من نحن</a></li>
+        <li><a href="#">فريق العمل</a></li>
+        <li><a href="#">الثقافة</a></li>
+        <li><a href="#">الوظائف</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">الخدمات</div>
+      <ul class="footer-links">
+        <li><a href="#">الهوية البصرية</a></li>
+        <li><a href="#">تصميم رقمي</a></li>
+        <li><a href="#">التطوير</a></li>
+        <li><a href="#">الإنتاج</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">التواصل</div>
+      <ul class="footer-links">
+        <li><a href="#">إنستغرام</a></li>
+        <li><a href="#">لينكدإن</a></li>
+        <li><a href="#">تويتر</a></li>
+        <li><a href="#">بيهانس</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 إبداع. جميع الحقوق محفوظة.</div>
+    <div class="footer-socials">
+      <a href="#" class="footer-social">in</a>
+      <a href="#" class="footer-social">tw</a>
+      <a href="#" class="footer-social">be</a>
+      <a href="#" class="footer-social">ig</a>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /homePage -->
+
+
+<!-- ══════════════════════════════════════
+     PORTFOLIO PAGE VIEW
+═══════════════════════════════════════ -->
+<div class="page-view" id="portfolioPage">
+  <div class="page-nav">
+    <button class="page-back" onclick="closePageView('portfolioPage')">
+      <span class="page-back-icon">→</span> رجوع للرئيسية
+    </button>
+    <div class="page-logo">إبداع</div>
+    <button class="btn-primary" style="font-size:13px;padding:10px 22px;cursor:pointer" onclick="openModal(event)">طلب خدمة</button>
+  </div>
+
+  <div class="page-content">
+    <div class="portfolio-page-header">
+      <div class="section-label">جميع الأعمال</div>
+      <h1>مشاريعنا الإبداعية</h1>
+      <p>استعرض مجموعة أعمالنا الكاملة — من الهوية البصرية إلى تطوير المنصات الرقمية المتكاملة.</p>
+    </div>
+
+    <div class="portfolio-controls">
+      <div class="portfolio-search-wrap">
+        <span class="portfolio-search-icon">🔍</span>
+        <input type="text" class="portfolio-search" id="portfolioSearch" placeholder="ابحث عن مشروع..." oninput="filterProjects()" />
+      </div>
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-cat="all" onclick="setFilter(this,'all')">الكل</button>
+        <button class="filter-tab" data-cat="هوية" onclick="setFilter(this,'هوية')">هوية بصرية</button>
+        <button class="filter-tab" data-cat="تصميم" onclick="setFilter(this,'تصميم')">تصميم رقمي</button>
+        <button class="filter-tab" data-cat="تطوير" onclick="setFilter(this,'تطوير')">تطوير</button>
+        <button class="filter-tab" data-cat="تغليف" onclick="setFilter(this,'تغليف')">تغليف</button>
+        <button class="filter-tab" data-cat="استراتيجية" onclick="setFilter(this,'استراتيجية')">استراتيجية</button>
+      </div>
+    </div>
+
+    <div class="all-projects-grid" id="allProjectsGrid">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PROJECT DETAIL PAGE VIEW
+═══════════════════════════════════════ -->
+<div class="page-view" id="detailPage">
+  <div class="page-nav">
+    <button class="page-back" id="detailBack" onclick="closeDetailPage()">
+      <span class="page-back-icon">→</span> رجوع
+    </button>
+    <div class="page-logo">إبداع</div>
+    <button class="btn-primary" style="font-size:13px;padding:10px 22px;cursor:pointer" onclick="openModal(event)">طلب خدمة مماثلة</button>
+  </div>
+
+  <div class="page-content">
+    <div class="detail-hero" id="detailHero">
+      <div class="detail-hero-bg" id="detailHeroBg"></div>
+      <div class="detail-hero-overlay">
+        <div class="detail-cat" id="detailCat"></div>
+        <div class="detail-title" id="detailTitle"></div>
+      </div>
+    </div>
+
+    <div class="detail-layout">
+      <div class="detail-main">
+        <div class="detail-desc-title">عن المشروع</div>
+        <div class="detail-desc-text" id="detailDesc"></div>
+
+        <div class="detail-gallery" id="detailGallery">
+          <!-- injected by JS -->
+        </div>
+      </div>
+
+      <div class="detail-sidebar">
+        <div class="detail-info-card">
+          <div class="detail-info-title">تفاصيل المشروع</div>
+          <div class="detail-info-list" id="detailInfoList"></div>
+        </div>
+
+        <div class="detail-info-card">
+          <div class="detail-info-title">النتائج والأثر</div>
+          <div class="detail-stats-grid" id="detailStatsGrid"></div>
+        </div>
+
+        <div class="detail-cta-card">
+          <div class="detail-cta-title">هل تريد مشروعاً مشابهاً؟</div>
+          <div class="detail-cta-text">نحن جاهزون لتحقيق رؤيتك بنفس المستوى من الاحترافية والإبداع.</div>
+          <button class="detail-cta-btn" onclick="openModal(event)">طلب خدمة مماثلة ✦</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     ADMIN DASHBOARD PAGE VIEW
+═══════════════════════════════════════ -->
+<div class="page-view" id="adminPage">
+  <div class="page-nav">
+    <button class="page-back" onclick="closePageView('adminPage')">
+      <span class="page-back-icon">→</span> رجوع للرئيسية
+    </button>
+    <div class="page-logo">إبداع — لوحة التحكم</div>
+    <div></div>
+  </div>
+
+  <div class="page-content">
+    <!-- Login form -->
+    <div id="adminLoginSection">
+      <div class="admin-login">
+        <h2>لوحة التحكم</h2>
+        <p>أدخل بيانات الدخول للوصول إلى الطلبات</p>
+        <div class="admin-field">
+          <label>اسم المستخدم</label>
+          <input type="text" id="adminUser" placeholder="admin" />
+        </div>
+        <div class="admin-field">
+          <label>كلمة المرور</label>
+          <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter') adminLogin()" />
+        </div>
+        <button class="admin-login-btn" onclick="adminLogin()">دخول</button>
+        <div class="admin-error" id="adminError">بيانات الدخول غير صحيحة</div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="admin-dashboard" id="adminDashboard">
+      <div class="admin-header">
+        <div>
+          <h2>لوحة التحكم</h2>
+          <p>إدارة طلبات الخدمة الواردة</p>
+        </div>
+        <button class="admin-logout" onclick="adminLogout()">خروج</button>
+      </div>
+
+      <div class="supabase-notice" id="supabaseNotice">
+        <strong>⚙️ إعداد قاعدة البيانات (Supabase)</strong><br>
+        لتفعيل حفظ البيانات، أضف مفتاح Supabase في متغيرات الإعداد أعلى الـ JavaScript:<br>
+        <code>SUPABASE_URL</code> و <code>SUPABASE_KEY</code><br>
+        ثم أنشئ جدولاً باسم <code>service_requests</code> بالأعمدة: phone, email, contact_methods, service, status, created_at.<br>
+        في الوقت الحالي، الطلبات محفوظة مؤقتاً في الجلسة الحالية.
+      </div>
+
+      <div class="admin-stats">
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">إجمالي الطلبات</div>
+          <div class="admin-stat-num" id="statTotal">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">طلبات جديدة</div>
+          <div class="admin-stat-num" id="statNew">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">تم التواصل</div>
+          <div class="admin-stat-num" id="statContacted">0</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">اليوم</div>
+          <div class="admin-stat-num" id="statToday">0</div>
+        </div>
+      </div>
+
+      <div class="admin-requests-header">
+        <div class="admin-requests-title">الطلبات الواردة</div>
+        <button class="admin-refresh" onclick="loadRequests()">🔄 تحديث</button>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>رقم الهاتف</th>
+              <th>البريد الإلكتروني</th>
+              <th>طريقة التواصل</th>
+              <th>الخدمة</th>
+              <th>التاريخ</th>
+              <th>الحالة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody">
+            <tr>
+              <td colspan="8" class="admin-loading">جاري التحميل...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     SERVICE REQUEST MODAL
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="serviceModal" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+    <div id="modalFormSection">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">طلب خدمة</div>
+          <div class="modal-subtitle">سنتواصل معك خلال 24 ساعة</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-form">
+        <div class="modal-field">
+          <label>رقم الهاتف <span style="color:#e55">*</span></label>
+          <div class="phone-input-wrap">
+            <span class="phone-prefix">+974</span>
+            <input type="tel" id="modalPhone" placeholder="XXXX XXXX" />
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label>البريد الإلكتروني (اختياري)</label>
+          <input type="email" id="modalEmail" placeholder="example@email.com" />
+        </div>
+
+        <div class="modal-field">
+          <span class="modal-label-group">طريقة التواصل المفضلة</span>
+          <div class="checkbox-group">
+            <label class="checkbox-item">
+              <input type="checkbox" name="contact" value="WhatsApp" id="chkWhatsapp" />
+              💬 واتساب
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="contact" value="Email" id="chkEmail" />
+              ✉️ بريد إلكتروني
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" name="contact" value="Telegram" id="chkTelegram" />
+              ✈️ تيليجرام
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label>الخدمة المطلوبة</label>
+          <select id="modalService">
+            <option value="">اختر الخدمة</option>
+            <option value="هوية بصرية">الهوية البصرية والعلامة التجارية</option>
+            <option value="تصميم رقمي">تصميم تجربة المستخدم</option>
+            <option value="تطوير مواقع">تطوير المواقع والتطبيقات</option>
+            <option value="استراتيجية رقمية">الاستراتيجية الرقمية</option>
+            <option value="تصوير وإنتاج">التصوير والإنتاج الإبداعي</option>
+          </select>
+        </div>
+
+        <div class="modal-buttons">
+          <button class="modal-submit" onclick="submitRequest()">إرسال الطلب ✦</button>
+          <button class="modal-cancel" onclick="closeModal()">إلغاء</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-success" id="modalSuccess">
+      <div class="modal-success-icon">✅</div>
+      <div class="modal-success-title">تم إرسال طلبك بنجاح!</div>
+      <div class="modal-success-text">شكراً لك. سيتواصل معك فريقنا خلال 24 ساعة عبر الطريقة التي اخترتها.</div>
+      <button class="modal-submit" style="margin-top:24px;max-width:200px" onclick="closeModal()">حسناً</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   CONFIGURATION — replace with your Supabase details
+═══════════════════════════════════════════════════════ */
+const SUPABASE_URL = ''; // e.g. 'https://xxxx.supabase.co'
+const SUPABASE_KEY = ''; // your anon public key
+const ADMIN_PASSWORD = 'admin123'; // change this!
+
+/* ═══════════════════════════════════════════════════════
+   PROJECT DATA
+═══════════════════════════════════════════════════════ */
+const projects = [
+  {
+    id: 0,
+    title: 'نوفا للتقنية المالية',
+    cat: 'هوية بصرية · استراتيجية',
+    tags: ['هوية', 'استراتيجية'],
+    desc: 'مشروع شامل لإعادة بناء الهوية البصرية لشركة نوفا للتقنية المالية — إحدى أبرز شركات الفينتك في المنطقة. قمنا بتطوير منظومة بصرية متكاملة تعكس الثقة والابتكار، تشمل الشعار ودليل الهوية والمطبوعات والتطبيقات الرقمية.',
+    bg: 'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)',
+    client: 'نوفا للتقنية المالية',
+    services: 'هوية بصرية، استراتيجية العلامة التجارية، تصميم رقمي',
+    year: '2024',
+    duration: '3 أشهر',
+    stats: [
+      { num: '340%', label: 'زيادة في التحويل' },
+      { num: '2.4M', label: 'مستخدم جديد' },
+      { num: '96%', label: 'رضا العملاء' },
+      { num: '18', label: 'جائزة دولية' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#0f3460,#16213e)',
+      'linear-gradient(135deg,#1a1a2e,#533483)',
+      'linear-gradient(45deg,#16213e,#0f3460,#533483)',
+    ],
+  },
+  {
+    id: 1,
+    title: 'أطلس للعقارات الفاخرة',
+    cat: 'تصميم رقمي · تطوير',
+    tags: ['تصميم', 'تطوير'],
+    desc: 'منصة رقمية متكاملة لعرض وبيع العقارات الفاخرة في منطقة الخليج. صممنا تجربة مستخدم استثنائية تعكس الفخامة والثقة، مع تطوير شامل للواجهة والخلفية باستخدام أحدث التقنيات.',
+    bg: 'linear-gradient(135deg,#2d1b69,#11998e,#38ef7d)',
+    client: 'أطلس العقارية',
+    services: 'تصميم UX/UI، تطوير ويب، تحسين الأداء',
+    year: '2024',
+    duration: '5 أشهر',
+    stats: [
+      { num: '280%', label: 'زيادة المبيعات' },
+      { num: '1.8M', label: 'زيارة شهرية' },
+      { num: '4.2s', label: 'وقت تحميل → 0.8s' },
+      { num: '12', label: 'جائزة تصميم' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#11998e,#38ef7d)',
+      'linear-gradient(135deg,#2d1b69,#11998e)',
+      'linear-gradient(45deg,#38ef7d,#2d1b69)',
+    ],
+  },
+  {
+    id: 2,
+    title: 'ذهب للمجوهرات',
+    cat: 'تغليف · هوية بصرية',
+    tags: ['تغليف', 'هوية'],
+    desc: 'هوية بصرية راقية لماركة ذهب للمجوهرات الفاخرة — مزيج من الأصالة والحداثة. شمل المشروع تصميم الشعار، منظومة الألوان والخطوط، التغليف الفاخر، وجميع المواد التسويقية.',
+    bg: 'linear-gradient(135deg,#c9a84c,#8b6914,#5a4010)',
+    client: 'ذهب للمجوهرات',
+    services: 'هوية بصرية، تصميم تغليف، مواد تسويقية',
+    year: '2023',
+    duration: '2 شهر',
+    stats: [
+      { num: '220%', label: 'نمو المبيعات' },
+      { num: '15', label: 'جائزة تصميم' },
+      { num: '98%', label: 'رضا العميل' },
+      { num: '40+', label: 'منتج مصمم' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#c9a84c,#5a4010)',
+      'linear-gradient(135deg,#8b6914,#c9a84c)',
+      'linear-gradient(45deg,#5a4010,#e8c97a)',
+    ],
+  },
+  {
+    id: 3,
+    title: 'ميدان للخدمات اللوجستية',
+    cat: 'موقع · تجربة مستخدم',
+    tags: ['تصميم', 'تطوير', 'استراتيجية'],
+    desc: 'منصة رقمية شاملة لإدارة سلاسل التوريد والخدمات اللوجستية في منطقة الشرق الأوسط. بنينا نظاماً متكاملاً يجمع بين سهولة الاستخدام والقدرة على معالجة آلاف العمليات يومياً.',
+    bg: 'linear-gradient(135deg,#0a0a0a,#1a1a1a,#2d2d2d)',
+    client: 'ميدان اللوجستية',
+    services: 'تصميم UX، تطوير متكامل، استراتيجية رقمية',
+    year: '2024',
+    duration: '6 أشهر',
+    stats: [
+      { num: '60%', label: 'توفير في الوقت' },
+      { num: '500+', label: 'شركة تستخدمه' },
+      { num: '99.9%', label: 'وقت التشغيل' },
+      { num: '3x', label: 'نمو في الإيرادات' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#1a1a1a,#333)',
+      'linear-gradient(135deg,#0a0a0a,#2d2d2d)',
+      'linear-gradient(45deg,#333,#111)',
+    ],
+  },
+  {
+    id: 4,
+    title: 'برق للتكنولوجيا',
+    cat: 'هوية بصرية · تصميم رقمي',
+    tags: ['هوية', 'تصميم'],
+    desc: 'هوية بصرية حديثة وديناميكية لشركة برق للتكنولوجيا — ناشئة تقنية تسعى لتغيير قطاع الطاقة الذكية. صممنا منظومة بصرية تعكس السرعة والابتكار والاستدامة.',
+    bg: 'linear-gradient(135deg,#f7971e,#ffd200)',
+    client: 'برق للتكنولوجيا',
+    services: 'هوية بصرية، تصميم رقمي، موشن جرافيك',
+    year: '2024',
+    duration: '2 شهر',
+    stats: [
+      { num: '190%', label: 'نمو الوعي' },
+      { num: '5M', label: 'مشاهدة إعلانية' },
+      { num: '87%', label: 'نسبة التذكر' },
+      { num: '8', label: 'جوائز' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#f7971e,#ffd200)',
+      'linear-gradient(135deg,#ffd200,#f7971e)',
+      'linear-gradient(45deg,#f7971e,#fff)',
+    ],
+  },
+  {
+    id: 5,
+    title: 'لونا للعناية بالبشرة',
+    cat: 'تغليف · هوية · تصميم',
+    tags: ['تغليف', 'هوية', 'تصميم'],
+    desc: 'علامة تجارية فاخرة للعناية بالبشرة الطبيعية. أنشأنا هوية شاملة تجمع بين الرقي والطبيعة، مع تصميم تغليف مميز لكل منتج يعكس مكوناته ويجذب الفئة المستهدفة.',
+    bg: 'linear-gradient(135deg,#ffecd2,#fcb69f)',
+    client: 'لونا للعناية',
+    services: 'هوية بصرية، تصميم تغليف، تصوير منتجات',
+    year: '2023',
+    duration: '3 أشهر',
+    stats: [
+      { num: '310%', label: 'مبيعات أول 3 أشهر' },
+      { num: '25K', label: 'متابع جديد' },
+      { num: '4.9/5', label: 'تقييم العملاء' },
+      { num: '6', label: 'جوائز تصميم' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#ffecd2,#fcb69f)',
+      'linear-gradient(135deg,#fcb69f,#ffecd2)',
+      'linear-gradient(45deg,#fcb69f,#fff)',
+    ],
+  },
+  {
+    id: 6,
+    title: 'قمم للتطوير العقاري',
+    cat: 'استراتيجية · تصميم رقمي',
+    tags: ['استراتيجية', 'تصميم'],
+    desc: 'استراتيجية شاملة لإطلاق مشروع قمم السكني الفاخر. طورنا الهوية الإعلانية، المواد التسويقية، والحضور الرقمي الكامل لتحقيق أعلى نسبة مبيعات في تاريخ الشركة.',
+    bg: 'linear-gradient(135deg,#141e30,#243b55)',
+    client: 'قمم للتطوير',
+    services: 'استراتيجية تسويقية، هوية إعلانية، إدارة حملات',
+    year: '2024',
+    duration: '4 أشهر',
+    stats: [
+      { num: '100%', label: 'نسبة البيع المسبق' },
+      { num: '2.1B', label: 'قيمة المبيعات' },
+      { num: '30', label: 'يوم لإتمام البيع' },
+      { num: '92%', label: 'نسبة الرضا' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#141e30,#243b55)',
+      'linear-gradient(135deg,#243b55,#141e30)',
+      'linear-gradient(45deg,#141e30,#34495e)',
+    ],
+  },
+  {
+    id: 7,
+    title: 'سما للضيافة الفاخرة',
+    cat: 'هوية بصرية · تصوير',
+    tags: ['هوية', 'تصوير'],
+    desc: 'هوية بصرية وتصوير احترافي لسلسلة فنادق سما الفاخرة. ابتكرنا تجربة بصرية متكاملة تعبر عن الضيافة العربية الراقية بأسلوب عصري يجذب الضيوف الدوليين.',
+    bg: 'linear-gradient(135deg,#232526,#414345)',
+    client: 'سما للضيافة',
+    services: 'هوية بصرية، تصوير احترافي، إنتاج محتوى',
+    year: '2023',
+    duration: '4 أشهر',
+    stats: [
+      { num: '45%', label: 'زيادة الحجوزات' },
+      { num: '4.8/5', label: 'تقييم الضيوف' },
+      { num: '120', label: 'صورة احترافية' },
+      { num: '5', label: 'فنادق مصوّرة' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#232526,#414345)',
+      'linear-gradient(135deg,#414345,#232526)',
+      'linear-gradient(45deg,#232526,#5a5a5a)',
+    ],
+  },
+  {
+    id: 8,
+    title: 'رياح للطاقة المتجددة',
+    cat: 'تطوير · استراتيجية رقمية',
+    tags: ['تطوير', 'استراتيجية'],
+    desc: 'منصة ذكية لمراقبة وإدارة مشاريع الطاقة المتجددة في الوقت الفعلي. طورنا نظاماً متكاملاً يجمع بين الـ IoT ولوحات البيانات والتقارير الآلية لمساعدة المستثمرين في اتخاذ قرارات دقيقة.',
+    bg: 'linear-gradient(135deg,#134e5e,#71b280)',
+    client: 'رياح للطاقة',
+    services: 'تطوير متكامل، استراتيجية رقمية، UX/UI',
+    year: '2024',
+    duration: '7 أشهر',
+    stats: [
+      { num: '35%', label: 'توفير في التكاليف' },
+      { num: '99.5%', label: 'دقة البيانات' },
+      { num: '200+', label: 'موقع مراقَب' },
+      { num: '4x', label: 'كفاءة التشغيل' },
+    ],
+    galleryBgs: [
+      'linear-gradient(135deg,#134e5e,#71b280)',
+      'linear-gradient(135deg,#71b280,#134e5e)',
+      'linear-gradient(45deg,#134e5e,#a8e6cf)',
+    ],
+  },
+];
+
+/* ═══════════════════════════════════════════════════════
+   IN-MEMORY DATABASE (Supabase fallback)
+═══════════════════════════════════════════════════════ */
+let inMemoryRequests = JSON.parse(localStorage.getItem('ibda3_requests') || '[]');
+
+function saveToMemory(request) {
+  inMemoryRequests.unshift(request);
+  try { localStorage.setItem('ibda3_requests', JSON.stringify(inMemoryRequests)); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════════
+   SUPABASE HELPERS
+═══════════════════════════════════════════════════════ */
+async function supabaseInsert(data) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/service_requests`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  return res.ok ? await res.json() : null;
+}
+
+async function supabaseFetch() {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/service_requests?order=created_at.desc`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  return res.ok ? await res.json() : null;
+}
+
+async function supabaseUpdate(id, data) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/service_requests?id=eq.${id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    },
+    body: JSON.stringify(data)
+  });
+  return res.ok;
+}
+
+async function supabaseDelete(id) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return null;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/service_requests?id=eq.${id}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`
+    }
+  });
+  return res.ok;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE NAVIGATION
+═══════════════════════════════════════════════════════ */
+function showPortfolioPage() {
+  renderAllProjects();
+  document.getElementById('portfolioPage').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('portfolioPage').scrollTop = 0;
+}
+
+function showProjectDetail(idx) {
+  const p = typeof idx === 'number' ? projects[idx] : projects.find(pr => pr.id === idx);
+  if (!p) return;
+
+  document.getElementById('detailHeroBg').style.background = p.bg;
+  document.getElementById('detailCat').textContent = p.cat;
+  document.getElementById('detailTitle').textContent = p.title;
+  document.getElementById('detailDesc').textContent = p.desc;
+
+  // Info list
+  const info = [
+    { label: 'العميل', value: p.client },
+    { label: 'الخدمات', value: p.services },
+    { label: 'السنة', value: p.year },
+    { label: 'المدة', value: p.duration },
+  ];
+  document.getElementById('detailInfoList').innerHTML = info.map(i =>
+    `<div class="detail-info-row">
+      <span class="detail-info-label">${i.label}</span>
+      <span class="detail-info-value">${i.value}</span>
+    </div>`
+  ).join('');
+
+  // Stats
+  document.getElementById('detailStatsGrid').innerHTML = p.stats.map(s =>
+    `<div class="detail-stat">
+      <div class="detail-stat-num">${s.num}</div>
+      <div class="detail-stat-label">${s.label}</div>
+    </div>`
+  ).join('');
+
+  // Gallery
+  document.getElementById('detailGallery').innerHTML = p.galleryBgs.map((bg, i) =>
+    `<div class="detail-gallery-item">
+      <div class="detail-gallery-bg" style="background:${bg}"></div>
+    </div>`
+  ).join('');
+
+  // Back button logic
+  const fromPortfolio = document.getElementById('portfolioPage').classList.contains('active');
+  document.getElementById('detailBack').onclick = () => {
+    document.getElementById('detailPage').classList.remove('active');
+    if (!fromPortfolio) document.body.style.overflow = '';
+  };
+
+  document.getElementById('detailPage').classList.add('active');
+  document.getElementById('detailPage').scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetailPage() {
+  document.getElementById('detailPage').classList.remove('active');
+  if (!document.getElementById('portfolioPage').classList.contains('active')) {
+    document.body.style.overflow = '';
+  }
+}
+
+function closePageView(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function showHome() {
+  ['portfolioPage','detailPage','adminPage'].forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  document.body.style.overflow = '';
+}
+
+/* ═══════════════════════════════════════════════════════
+   PORTFOLIO FILTER & SEARCH
+═══════════════════════════════════════════════════════ */
+let currentFilter = 'all';
+
+function renderAllProjects(filter, search) {
+  filter = filter || currentFilter;
+  search = search || document.getElementById('portfolioSearch').value.toLowerCase();
+
+  const grid = document.getElementById('allProjectsGrid');
+  const visible = projects.filter(p => {
+    const matchFilter = filter === 'all' || p.tags.some(t => t.includes(filter));
+    const matchSearch = !search || p.title.toLowerCase().includes(search) ||
+      p.cat.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search);
+    return matchFilter && matchSearch;
+  });
+
+  if (visible.length === 0) {
+    grid.innerHTML = `<div class="no-results">
+      <div class="no-results-icon">🔍</div>
+      <div class="no-results-text">لا توجد نتائج مطابقة</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = visible.map(p => `
+    <div class="all-project-card" onclick="showProjectDetail(${p.id})">
+      <div class="all-project-img">
+        <div class="all-project-img-bg" style="background:${p.bg}"></div>
+      </div>
+      <div class="all-project-body">
+        <div class="all-project-cat">${p.cat}</div>
+        <div class="all-project-title">${p.title}</div>
+        <div class="all-project-desc">${p.desc.substring(0, 100)}...</div>
+        <button class="all-project-btn">عرض التفاصيل →</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setFilter(btn, cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderAllProjects(cat);
+}
+
+function filterProjects() {
+  renderAllProjects(currentFilter, document.getElementById('portfolioSearch').value.toLowerCase());
+}
+
+/* ═══════════════════════════════════════════════════════
+   SERVICE REQUEST MODAL
+═══════════════════════════════════════════════════════ */
+function openModal(e) {
+  if (e) e.preventDefault();
+  document.getElementById('serviceModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modalFormSection').style.display = '';
+  document.getElementById('modalSuccess').style.display = 'none';
+}
+
+function closeModal() {
+  document.getElementById('serviceModal').classList.remove('active');
+  // Only restore scroll if no page views are open
+  const anyOpen = ['portfolioPage','detailPage','adminPage'].some(
+    id => document.getElementById(id).classList.contains('active')
+  );
+  if (!anyOpen) document.body.style.overflow = '';
+  // Reset form
+  document.getElementById('modalPhone').value = '';
+  document.getElementById('modalEmail').value = '';
+  document.getElementById('modalService').value = '';
+  ['chkWhatsapp','chkEmail','chkTelegram'].forEach(id => {
+    document.getElementById(id).checked = false;
+  });
+}
+
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('serviceModal')) closeModal();
+}
+
+async function submitRequest() {
+  const phone = document.getElementById('modalPhone').value.trim();
+  if (!phone) {
+    document.getElementById('modalPhone').style.borderColor = '#e55';
+    document.getElementById('modalPhone').focus();
+    return;
+  }
+  document.getElementById('modalPhone').style.borderColor = '';
+
+  const contactMethods = ['chkWhatsapp','chkEmail','chkTelegram']
+    .filter(id => document.getElementById(id).checked)
+    .map(id => document.getElementById(id).nextSibling.textContent.trim());
+
+  const requestData = {
+    phone: '+974' + phone,
+    email: document.getElementById('modalEmail').value.trim() || null,
+    contact_methods: contactMethods.join(', ') || 'غير محدد',
+    service: document.getElementById('modalService').value || 'غير محدد',
+    status: 'new',
+    created_at: new Date().toISOString(),
+    id: Date.now()
+  };
+
+  // Try Supabase, fallback to memory
+  const result = await supabaseInsert(requestData);
+  if (!result) saveToMemory(requestData);
+
+  // Show success
+  document.getElementById('modalFormSection').style.display = 'none';
+  document.getElementById('modalSuccess').style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════════════════ */
+function showAdminPage() {
+  document.getElementById('adminPage').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('adminPage').scrollTop = 0;
+}
+
+function adminLogin() {
+  const user = document.getElementById('adminUser').value.trim();
+  const pass = document.getElementById('adminPass').value.trim();
+  if (pass === ADMIN_PASSWORD && (user === 'admin' || user === 'إبداع')) {
+    document.getElementById('adminLoginSection').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'block';
+    if (!SUPABASE_URL) document.getElementById('supabaseNotice').style.display = 'block';
+    else document.getElementById('supabaseNotice').style.display = 'none';
+    loadRequests();
+  } else {
+    document.getElementById('adminError').style.display = 'block';
+    document.getElementById('adminPass').value = '';
+    setTimeout(() => document.getElementById('adminError').style.display = 'none', 3000);
+  }
+}
+
+function adminLogout() {
+  document.getElementById('adminLoginSection').style.display = '';
+  document.getElementById('adminDashboard').style.display = 'none';
+  document.getElementById('adminUser').value = '';
+  document.getElementById('adminPass').value = '';
+}
+
+async function loadRequests() {
+  const tbody = document.getElementById('requestsTableBody');
+  tbody.innerHTML = '<tr><td colspan="8" class="admin-loading">جاري التحميل...</td></tr>';
+
+  let requests = await supabaseFetch();
+  if (!requests) requests = inMemoryRequests;
+
+  updateAdminStats(requests);
+
+  if (!requests || requests.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8">
+      <div class="admin-empty">
+        <div class="admin-empty-icon">📭</div>
+        <div>لا توجد طلبات حتى الآن</div>
+      </div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = requests.map((r, i) => {
+    const date = new Date(r.created_at).toLocaleDateString('ar-QA', {
+      year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'
+    });
+    const statusClass = r.status === 'contacted' ? 'status-contacted' : 'status-new';
+    const statusText = r.status === 'contacted' ? '✓ تم التواصل' : '● جديد';
+    return `<tr>
+      <td style="color:var(--gray-300)">${i + 1}</td>
+      <td><strong>${r.phone || '—'}</strong></td>
+      <td>${r.email || '—'}</td>
+      <td>${r.contact_methods || '—'}</td>
+      <td>${r.service || '—'}</td>
+      <td style="color:var(--gray-500);font-size:12px">${date}</td>
+      <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+      <td>
+        ${r.status !== 'contacted' ? `<button class="admin-action-btn btn-mark" onclick="markContacted('${r.id}')">✓ تواصلنا</button>` : ''}
+        <button class="admin-action-btn btn-delete" onclick="deleteRequest('${r.id}')">✕ حذف</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateAdminStats(requests) {
+  const total = requests.length;
+  const newReqs = requests.filter(r => r.status === 'new').length;
+  const contacted = requests.filter(r => r.status === 'contacted').length;
+  const today = requests.filter(r => {
+    const d = new Date(r.created_at);
+    const now = new Date();
+    return d.toDateString() === now.toDateString();
+  }).length;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statNew').textContent = newReqs;
+  document.getElementById('statContacted').textContent = contacted;
+  document.getElementById('statToday').textContent = today;
+}
+
+async function markContacted(id) {
+  const updated = await supabaseUpdate(id, { status: 'contacted' });
+  if (!updated) {
+    // update in memory
+    const r = inMemoryRequests.find(r => String(r.id) === String(id));
+    if (r) { r.status = 'contacted'; localStorage.setItem('ibda3_requests', JSON.stringify(inMemoryRequests)); }
+  }
+  loadRequests();
+}
+
+async function deleteRequest(id) {
+  if (!confirm('هل تريد حذف هذا الطلب؟')) return;
+  const deleted = await supabaseDelete(id);
+  if (!deleted) {
+    inMemoryRequests = inMemoryRequests.filter(r => String(r.id) !== String(id));
+    localStorage.setItem('ibda3_requests', JSON.stringify(inMemoryRequests));
+  }
+  loadRequests();
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE MENU
+═══════════════════════════════════════════════════════ */
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const ham = document.getElementById('hamburger');
+  const open = menu.classList.toggle('open');
+  ham.classList.toggle('active', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeMobileMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+/* ═══════════════════════════════════════════════════════
+   LOADER
+═══════════════════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const loader = document.getElementById('loader');
+    loader.classList.add('hide');
+    setTimeout(() => loader.style.display = 'none', 900);
+  }, 2400);
+});
+
+/* ═══════════════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════════════ */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = -100, my = -100, rx = -100, ry = -100;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor(){
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+  rx += (mx - rx) * 0.14;
+  ry += (my - ry) * 0.14;
+  ring.style.left = rx + 'px';
+  ring.style.top  = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+
+/* ═══════════════════════════════════════════════════════
+   SCROLL PROGRESS & NAVBAR
+═══════════════════════════════════════════════════════ */
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  progressBar.style.width = (window.scrollY / total * 100) + '%';
+});
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ═══════════════════════════════════════════════════════
+   INTERSECTION OBSERVER
+═══════════════════════════════════════════════════════ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(el => {
+    if (el.isIntersecting) { el.target.classList.add('in-view'); io.unobserve(el.target); }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal, .stat-item').forEach(el => io.observe(el));
+
+/* ═══════════════════════════════════════════════════════
+   COUNTER ANIMATION
+═══════════════════════════════════════════════════════ */
+function animCounter(el) {
+  const target = +el.dataset.target;
+  let start = 0;
+  const duration = 1800;
+  const step = timestamp => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 4);
+    el.textContent = Math.floor(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  };
+  requestAnimationFrame(step);
+}
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { animCounter(e.target); counterObserver.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+/* ═══════════════════════════════════════════════════════
+   TESTIMONIALS — static grid render (no animation)
+═══════════════════════════════════════════════════════ */
+const testimonials = [
+  { stars:'★★★★★', quote:'تعاملنا مع إبداع لتجديد هويتنا البصرية بالكامل والنتيجة فاقت كل التوقعات. فريق محترف ومتفانٍ حقاً.', name:'سارة الحمدان', role:'المدير التنفيذي، نوفا', avatar:'https://i.pravatar.cc/88?img=47' },
+  { stars:'★★★★★', quote:'من أفضل الوكالات التي تعاملت معها. فهموا رؤيتي تماماً وحولوها إلى واقع بشكل احترافي ومميز جداً.', name:'محمد العتيبي', role:'مؤسس، أطلس', avatar:'👨' },
+  { stars:'★★★★★', quote:'الموقع الذي صمموه لنا رفع معدل التحويل بنسبة 340% في الشهر الأول. نتائج مذهلة وعمل استثنائي.', name:'نورة السعيد', role:'مديرة التسويق، ميدان', avatar:'👩‍💼' },
+  { stars:'★★★★★', quote:'إبداع ليست مجرد وكالة تصميم، هي شريك استراتيجي حقيقي يفكر في نمو عملك ويضع خططاً عملية.', name:'خالد الزهراني', role:'الرئيس التنفيذي، ذهب', avatar:'👨‍💼' },
+  { stars:'★★★★★', quote:'سرعة التنفيذ وجودة العمل وحسن التعامل جعلوا التجربة ممتعة من البداية للنهاية. شكراً جزيلاً!', name:'ريم المطيري', role:'مؤسسة، لونا', avatar:'👩‍🎨' },
+  { stars:'★★★★★', quote:'أنجزوا مشروعنا في وقت قياسي بجودة عالية جداً. الفريق محترف ومتجاوب ومهتم بأدق التفاصيل.', name:'فهد القحطاني', role:'مدير المنتج، برق', avatar:'👨‍💻' },
+];
+
+const testiGrid = document.getElementById('testiGrid');
+if (testiGrid) {
+  testiGrid.innerHTML = testimonials.map((t, i) => {
+    const isImg = t.avatar.startsWith('http');
+    const avatarHtml = isImg
+      ? `<img src="${t.avatar}" alt="${t.name}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:1px solid var(--gray-100);" />`
+      : `<div class="testi-avatar">${t.avatar}</div>`;
+    return `
+    <div class="testi-card reveal${i % 3 === 1 ? ' reveal-delay-1' : i % 3 === 2 ? ' reveal-delay-2' : ''}">
+      <div class="testi-stars">${t.stars}</div>
+      <div class="testi-quote">${t.quote}</div>
+      <div class="testi-author">
+        ${avatarHtml}
+        <div>
+          <div class="testi-name">${t.name}</div>
+          <div class="testi-role">${t.role}</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--gray-100);font-size:11px;color:var(--gray-300);letter-spacing:0.3px">تعليق ${i + 1} من ${testimonials.length}</div>
+    </div>`;
+  }).join('');
+  testiGrid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+/* ═══════════════════════════════════════════════════════
+   SOCIAL MEDIA PROJECTS DATA & RENDERING
+═══════════════════════════════════════════════════════ */
+const socialProjects = [
+  {
+    id: 'sm-0',
+    title: 'نوفا — حملة إطلاق التطبيق',
+    cat: 'تقنية مالية · سوشيال ميديا',
+    desc: 'سلسلة منشورات لإطلاق تطبيق نوفا المصرفي — استهدفت جيل الشباب بتصاميم ديناميكية.',
+    coverBg: 'linear-gradient(135deg,#1a1a2e,#0f3460,#533483)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#1a1a2e,#0f3460)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#533483,#1a1a2e)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#0f3460,#533483)', type: 'إعلان' },
+      { bg: 'linear-gradient(135deg,#16213e,#1a1a2e)', type: 'ستوري' },
+      { bg: 'linear-gradient(45deg,#533483,#0f3460)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#1a1a2e,#533483)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-1',
+    title: 'ذهب — رمضان كريم',
+    cat: 'مجوهرات · حملة موسمية',
+    desc: 'تصاميم رمضانية فاخرة لماركة ذهب — مزجت بين الأصالة والحداثة بأسلوب ذهبي راقٍ.',
+    coverBg: 'linear-gradient(135deg,#c9a84c,#8b6914,#5a4010)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#c9a84c,#5a4010)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#8b6914,#c9a84c)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#5a4010,#e8c97a)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#c9a84c,#8b6914)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#e8c97a,#c9a84c)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#8b6914,#5a4010)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-2',
+    title: 'لونا — إطلاق مجموعة الصيف',
+    cat: 'عناية بالبشرة · محتوى رقمي',
+    desc: 'محتوى إبداعي لإطلاق مجموعة الصيف من لونا — بأسلوب ناعم وألوان تعبّر عن الطبيعة.',
+    coverBg: 'linear-gradient(135deg,#ffecd2,#fcb69f,#e8a87c)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#fcb69f,#ffecd2)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#e8a87c,#fcb69f)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#ffecd2,#e8a87c)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#fcb69f,#e8a87c)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#ffecd2,#e8a87c)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-3',
+    title: 'برق — حملة الوعي بالعلامة',
+    cat: 'تكنولوجيا · هوية رقمية',
+    desc: 'سلسلة إعلانية تُعرّف بعلامة برق للتكنولوجيا — بتصاميم ديناميكية تعكس الابتكار والسرعة.',
+    coverBg: 'linear-gradient(135deg,#f7971e,#ffd200)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#f7971e,#ffd200)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#ffd200,#f7971e)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#f7971e,#fff)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#ffd200,#fff)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#f7971e,#ffd200)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#ffd200,#f7971e)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-4',
+    title: 'سما — تجربة ضيافة فاخرة',
+    cat: 'فنادق · محتوى سياحي',
+    desc: 'محتوى بصري فاخر لفنادق سما — يُبرز تفاصيل تجربة الضيافة بأسلوب راقٍ وجذاب.',
+    coverBg: 'linear-gradient(135deg,#232526,#414345,#6a6a6a)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#232526,#414345)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#414345,#232526)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#232526,#5a5a5a)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#6a6a6a,#232526)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#414345,#6a6a6a)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#232526,#414345)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-5',
+    title: 'قمم — إطلاق المشروع السكني',
+    cat: 'عقارات · حملة إطلاق',
+    desc: 'حملة رقمية متكاملة لإطلاق مشروع قمم السكني — صممت لتوليد الاهتمام وتحقيق أعلى نسب تفاعل.',
+    coverBg: 'linear-gradient(135deg,#141e30,#243b55,#34495e)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#141e30,#243b55)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#243b55,#141e30)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#141e30,#34495e)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#34495e,#141e30)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#243b55,#34495e)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#141e30,#243b55)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-6',
+    title: 'رياح — الطاقة المتجددة للجميع',
+    cat: 'طاقة · توعية بيئية',
+    desc: 'محتوى توعوي وتسويقي لرياح للطاقة المتجددة — يُبسّط مفاهيم الطاقة النظيفة بتصاميم ملهمة.',
+    coverBg: 'linear-gradient(135deg,#134e5e,#71b280,#a8e6cf)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#134e5e,#71b280)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#71b280,#134e5e)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#134e5e,#a8e6cf)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#a8e6cf,#134e5e)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#71b280,#a8e6cf)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#134e5e,#71b280)', type: 'ريلز' },
+    ],
+  },
+  {
+    id: 'sm-7',
+    title: 'أطلس — العقارات الفاخرة',
+    cat: 'عقارات فاخرة · تسويق رقمي',
+    desc: 'سلسلة منشورات راقية لأطلس العقارية — تستهدف شريحة المستثمرين بتصاميم تُجسّد الفخامة.',
+    coverBg: 'linear-gradient(135deg,#2d1b69,#11998e,#38ef7d)',
+    posts: [
+      { bg: 'linear-gradient(135deg,#2d1b69,#11998e)', type: 'رئيسي', wide: true },
+      { bg: 'linear-gradient(135deg,#11998e,#38ef7d)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#2d1b69,#38ef7d)', type: 'إعلان' },
+      { bg: 'linear-gradient(45deg,#38ef7d,#2d1b69)', type: 'منشور' },
+      { bg: 'linear-gradient(135deg,#11998e,#2d1b69)', type: 'ستوري' },
+      { bg: 'linear-gradient(135deg,#38ef7d,#11998e)', type: 'ريلز' },
+    ],
+  },
+];
+
+// Render social grid
+const socialGrid = document.getElementById('socialGrid');
+if (socialGrid) {
+  socialGrid.innerHTML = socialProjects.map((p, idx) => `
+    <div class="social-card reveal" style="transition-delay:${(idx % 4) * 0.08}s" onclick="openSocialLightbox(${idx})">
+      <div class="social-card-bg" style="background:${p.coverBg}"></div>
+      <div class="social-card-overlay">
+        <div class="social-card-client">${p.cat}</div>
+        <div class="social-card-title">${p.title}</div>
+        <div class="social-card-count">${p.posts.length} تصميم</div>
+      </div>
+      <div class="social-card-zoom-icon">⊕</div>
+    </div>
+  `).join('');
+  // Re-observe new reveal elements
+  socialGrid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+// Open/close social lightbox
+function openSocialLightbox(idx) {
+  const p = socialProjects[idx];
+  document.getElementById('slbCat').textContent = p.cat;
+  document.getElementById('slbTitle').textContent = p.title;
+  document.getElementById('slbDesc').textContent = p.desc;
+  const gallery = document.getElementById('slbGallery');
+  gallery.innerHTML = p.posts.map(post => `
+    <div class="social-lightbox-item${post.wide ? ' wide' : ''}">
+      <div class="social-lightbox-item-bg" style="background:${post.bg}"></div>
+    </div>
+  `).join('');
+  document.getElementById('socialLightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeSocialLightbox() {
+  document.getElementById('socialLightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+function handleSocialLightboxOverlay(e) {
+  if (e.target === document.getElementById('socialLightbox')) closeSocialLightbox();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialLightbox(); });
+
+/* ═══════════════════════════════════════════════════════
+   HERO PARALLAX
+═══════════════════════════════════════════════════════ */
+document.getElementById('hero').addEventListener('mousemove', e => {
+  const hero = document.getElementById('hero');
+  const rect = hero.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dx = (e.clientX - cx) / rect.width;
+  const dy = (e.clientY - cy) / rect.height;
+  document.querySelectorAll('.hero-bg-orb').forEach((orb, i) => {
+    const factor = (i + 1) * 18;
+    orb.style.transform = `translate(${dx * factor}px, ${dy * factor}px)`;
+  });
+});
+
+/* ═══════════════════════════════════════════════════════
+   MAGNETIC BUTTONS
+═══════════════════════════════════════════════════════ */
+document.querySelectorAll('.btn-primary, .btn-secondary, .nav-cta, .form-submit').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const r = btn.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    btn.style.transform = `translate(${dx * 0.18}px, ${dy * 0.24}px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+/* ═══════════════════════════════════════════════════════
+   SERVICE CARDS STAGGER
+═══════════════════════════════════════════════════════ */
+document.querySelectorAll('.service-card').forEach((card, i) => {
+  card.style.transitionDelay = (i * 0.1) + 's';
+});
+
+/* ═══════════════════════════════════════════════════════
+   SECRET ADMIN ACCESS: click logo 5 times
+═══════════════════════════════════════════════════════ */
+let logoClicks = 0, logoTimer;
+document.querySelector('.nav-logo').addEventListener('click', function(e) {
+  logoClicks++;
+  clearTimeout(logoTimer);
+  logoTimer = setTimeout(() => logoClicks = 0, 2000);
+  if (logoClicks >= 5) {
+    logoClicks = 0;
+    showAdminPage();
+  }
+});
+</script>
+</body>
+</html>
