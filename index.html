@@ -215,7 +215,7 @@
   .nav-mobile-menu.open { display: flex; opacity: 1; }
   .nav-mobile-menu a {
     font-family: var(--font-display);
-    font-size: 28px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--black);
     text-decoration: none;
     letter-spacing: -1px;
@@ -1818,8 +1818,8 @@
     .portfolio-header { flex-direction: column; align-items: flex-start; }
 
     .social-grid { grid-template-columns: repeat(2, 1fr); }
-    .social-lightbox-gallery { grid-template-columns: repeat(2, 1fr); padding: 20px 24px 28px; }
-    .social-lightbox-item.wide { grid-column: span 2; }
+    .social-lightbox-gallery { grid-template-columns: 1fr 1fr; padding: 20px 24px 28px; }
+    .social-lightbox-item.wide { grid-column: span 1; aspect-ratio: 1 / 1; }
     .social-lightbox-header { padding: 24px 24px 18px; }
     .social-lightbox-box { border-radius: var(--radius-lg); }
     .testi-grid { grid-template-columns: 1fr 1fr; }
@@ -1843,8 +1843,8 @@
   }
 
   @media (max-width: 600px) {
-    .social-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .social-lightbox-gallery { grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; }
+    .social-grid { grid-template-columns: 1fr; gap: 14px; }
+    .social-lightbox-gallery { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
     .all-projects-grid { grid-template-columns: 1fr; }
     .detail-gallery { grid-template-columns: 1fr; }
     .detail-gallery-item:first-child { grid-column: span 1; }
@@ -2591,7 +2591,66 @@
         <div class="modal-field">
           <label>رقم الهاتف <span style="color:#e55">*</span></label>
           <div class="phone-input-wrap">
-            <span class="phone-prefix">+974</span>
+            <select id="modalPhoneCode" style="background:var(--gray-100);border:1.5px solid var(--gray-100);border-radius:12px;padding:14px 10px;font-size:13px;color:var(--gray-700);font-family:var(--font-body);flex-shrink:0;outline:none;appearance:none;cursor:pointer;max-width:130px;">
+              <option value="+974">🇶🇦 +974</option>
+              <option value="+966">🇸🇦 +966</option>
+              <option value="+971">🇦🇪 +971</option>
+              <option value="+965">🇰🇼 +965</option>
+              <option value="+973">🇧🇭 +973</option>
+              <option value="+968">🇴🇲 +968</option>
+              <option value="+962">🇯🇴 +962</option>
+              <option value="+961">🇱🇧 +961</option>
+              <option value="+963">🇸🇾 +963</option>
+              <option value="+964">🇮🇶 +964</option>
+              <option value="+20">🇪🇬 +20</option>
+              <option value="+212">🇲🇦 +212</option>
+              <option value="+216">🇹🇳 +216</option>
+              <option value="+213">🇩🇿 +213</option>
+              <option value="+218">🇱🇾 +218</option>
+              <option value="+249">🇸🇩 +249</option>
+              <option value="+967">🇾🇪 +967</option>
+              <option value="+970">🇵🇸 +970</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+              <option value="+33">🇫🇷 +33</option>
+              <option value="+49">🇩🇪 +49</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+39">🇮🇹 +39</option>
+              <option value="+31">🇳🇱 +31</option>
+              <option value="+32">🇧🇪 +32</option>
+              <option value="+41">🇨🇭 +41</option>
+              <option value="+43">🇦🇹 +43</option>
+              <option value="+46">🇸🇪 +46</option>
+              <option value="+47">🇳🇴 +47</option>
+              <option value="+45">🇩🇰 +45</option>
+              <option value="+358">🇫🇮 +358</option>
+              <option value="+351">🇵🇹 +351</option>
+              <option value="+30">🇬🇷 +30</option>
+              <option value="+48">🇵🇱 +48</option>
+              <option value="+90">🇹🇷 +90</option>
+              <option value="+7">🇷🇺 +7</option>
+              <option value="+86">🇨🇳 +86</option>
+              <option value="+81">🇯🇵 +81</option>
+              <option value="+82">🇰🇷 +82</option>
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+92">🇵🇰 +92</option>
+              <option value="+880">🇧🇩 +880</option>
+              <option value="+94">🇱🇰 +94</option>
+              <option value="+60">🇲🇾 +60</option>
+              <option value="+65">🇸🇬 +65</option>
+              <option value="+62">🇮🇩 +62</option>
+              <option value="+63">🇵🇭 +63</option>
+              <option value="+66">🇹🇭 +66</option>
+              <option value="+84">🇻🇳 +84</option>
+              <option value="+61">🇦🇺 +61</option>
+              <option value="+64">🇳🇿 +64</option>
+              <option value="+27">🇿🇦 +27</option>
+              <option value="+234">🇳🇬 +234</option>
+              <option value="+254">🇰🇪 +254</option>
+              <option value="+55">🇧🇷 +55</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+54">🇦🇷 +54</option>
+            </select>
             <input type="tel" id="modalPhone" placeholder="XXXX XXXX" />
           </div>
         </div>
@@ -2611,10 +2670,6 @@
             <label class="checkbox-item">
               <input type="checkbox" name="contact" value="Email" id="chkEmail" />
               ✉️ بريد إلكتروني
-            </label>
-            <label class="checkbox-item">
-              <input type="checkbox" name="contact" value="Telegram" id="chkTelegram" />
-              ✈️ تيليجرام
             </label>
           </div>
         </div>
@@ -3086,7 +3141,7 @@ function closeModal() {
   document.getElementById('modalPhone').value = '';
   document.getElementById('modalEmail').value = '';
   document.getElementById('modalService').value = '';
-  ['chkWhatsapp','chkEmail','chkTelegram'].forEach(id => {
+  ['chkWhatsapp','chkEmail'].forEach(id => {
     document.getElementById(id).checked = false;
   });
 }
@@ -3104,12 +3159,13 @@ async function submitRequest() {
   }
   document.getElementById('modalPhone').style.borderColor = '';
 
-  const contactMethods = ['chkWhatsapp','chkEmail','chkTelegram']
+  const contactMethods = ['chkWhatsapp','chkEmail']
     .filter(id => document.getElementById(id).checked)
     .map(id => document.getElementById(id).nextSibling.textContent.trim());
 
+  const phoneCode = document.getElementById('modalPhoneCode').value;
   const requestData = {
-    phone: '+974' + phone,
+    phone: phoneCode + phone,
     email: document.getElementById('modalEmail').value.trim() || null,
     contact_methods: contactMethods.join(', ') || 'غير محدد',
     service: document.getElementById('modalService').value || 'غير محدد',
