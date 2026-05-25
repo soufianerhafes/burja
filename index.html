@@ -1029,39 +1029,42 @@
   }
   .social-card:hover .social-card-zoom-icon { opacity: 1; transform: scale(1); }
 
-  /* ── SOCIAL PROJECT LIGHTBOX ── */
+  /* ── SOCIAL PROJECT LIGHTBOX (FULLSCREEN ON DESKTOP) ── */
   .social-lightbox {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(0,0,0,0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     z-index: 7000;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px;
+    display: flex; align-items: stretch; justify-content: center;
+    padding: 0;
     opacity: 0; visibility: hidden;
     transition: opacity 0.35s, visibility 0.35s;
   }
   .social-lightbox.active { opacity: 1; visibility: visible; }
   .social-lightbox-box {
     background: var(--white);
-    border-radius: var(--radius-xl);
-    width: 100%; max-width: 900px;
-    max-height: 90vh;
+    border-radius: 0;
+    width: 100%; max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
     overflow-y: auto;
-    transform: translateY(40px) scale(0.96);
+    transform: translateY(30px) scale(0.98);
     transition: transform 0.45s cubic-bezier(.16,1,.3,1);
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
   .social-lightbox.active .social-lightbox-box {
     transform: translateY(0) scale(1);
   }
   .social-lightbox-header {
-    padding: 32px 36px 24px;
+    padding: 28px 56px 22px;
     border-bottom: 1px solid var(--gray-100);
     display: flex; justify-content: space-between; align-items: flex-start;
     position: sticky; top: 0; background: var(--white);
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     z-index: 2;
+    flex-shrink: 0;
   }
   .social-lightbox-cat {
     font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
@@ -1069,28 +1072,29 @@
   }
   .social-lightbox-title {
     font-family: var(--font-display);
-    font-size: clamp(22px, 3vw, 32px);
+    font-size: clamp(24px, 3vw, 38px);
     font-weight: 800; letter-spacing: -1px; color: var(--black);
   }
   .social-lightbox-desc {
-    font-size: 13px; color: var(--gray-500);
-    margin-top: 6px; max-width: 440px; line-height: 1.7;
+    font-size: 14px; color: var(--gray-500);
+    margin-top: 8px; max-width: 600px; line-height: 1.7;
   }
   .social-lightbox-close {
-    width: 40px; height: 40px;
+    width: 44px; height: 44px;
     background: var(--gray-100);
     border: none; border-radius: 50%;
-    font-size: 18px; cursor: pointer;
+    font-size: 20px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     color: var(--gray-700); flex-shrink: 0;
     transition: background 0.2s, transform 0.2s;
   }
   .social-lightbox-close:hover { background: var(--gray-200); transform: rotate(90deg); }
   .social-lightbox-gallery {
-    padding: 28px 36px 36px;
+    padding: 36px 56px 56px;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    flex: 1;
   }
   .social-lightbox-item {
     aspect-ratio: 1 / 1;
@@ -1099,24 +1103,85 @@
     position: relative;
     background: var(--gray-100);
     cursor: zoom-in;
-    transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1), box-shadow 0.35s;
   }
-  .social-lightbox-item:hover { transform: scale(1.03); }
+  .social-lightbox-item:hover { transform: scale(1.04); box-shadow: var(--shadow-lg); }
   .social-lightbox-item.wide {
     grid-column: span 2; aspect-ratio: 2 / 1;
   }
   .social-lightbox-item-bg {
     position: absolute; inset: 0;
   }
-  /* post type badge */
-  .social-post-badge {
-    position: absolute; top: 10px; right: 10px;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    border-radius: 99px; padding: 4px 10px;
-    font-size: 10px; letter-spacing: 1px;
-    color: rgba(255,255,255,0.85); text-transform: uppercase;
+  .social-lightbox-item img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
   }
+  /* zoom hint overlay */
+  .social-lightbox-item::after {
+    content: '🔍';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity 0.25s;
+    pointer-events: none;
+  }
+  .social-lightbox-item:hover::after { opacity: 1; }
+
+  /* ── IMAGE ZOOM VIEWER ── */
+  .img-zoom-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.97);
+    z-index: 9000;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    cursor: zoom-out;
+  }
+  .img-zoom-overlay.active { opacity: 1; visibility: visible; }
+  .img-zoom-inner {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    transform: scale(0.88);
+    transition: transform 0.35s cubic-bezier(.16,1,.3,1);
+  }
+  .img-zoom-overlay.active .img-zoom-inner { transform: scale(1); }
+  .img-zoom-content {
+    /* مربع كامل 1:1 يملأ الشاشة */
+    width: min(90vw, 90vh);
+    height: min(90vw, 90vh);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+  .img-zoom-content-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+  .img-zoom-content img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; /* يملأ المربع كاملاً بدون مساحات فارغة */
+  }
+  .img-zoom-close {
+    position: fixed; top: 24px; left: 24px;
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+    transition: background 0.2s, transform 0.2s;
+    z-index: 2;
+  }
+  .img-zoom-close:hover { background: rgba(255,255,255,0.25); transform: rotate(90deg); }
+  /* pinch-zoom support on mobile */
+  .img-zoom-content { touch-action: pinch-zoom; }
 
   /* ── NOISE TEXTURE overlay ── */
 
@@ -1606,6 +1671,190 @@
   .detail-cta-btn:hover { background: var(--gold-light); transform: scale(1.02); }
 
   /* ── ADMIN DASHBOARD ── */
+  .admin-tabs {
+    display: flex; gap: 4px;
+    background: var(--gray-100);
+    border-radius: var(--radius-sm);
+    padding: 5px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .admin-tab-btn {
+    flex: 1; min-width: 100px;
+    padding: 10px 16px;
+    border: none; border-radius: 10px;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 13px; font-weight: 500;
+    color: var(--gray-500);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .admin-tab-btn.active {
+    background: var(--white);
+    color: var(--black);
+    box-shadow: var(--shadow-sm);
+  }
+  .admin-tab-panel { display: none; }
+  .admin-tab-panel.active { display: block; }
+
+  /* CMS Section title */
+  .cms-section-title {
+    font-family: var(--font-display);
+    font-size: 18px; font-weight: 700;
+    color: var(--black); margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--gray-100);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cms-section-title span { font-size: 20px; }
+
+  /* CMS Card */
+  .cms-card {
+    background: var(--gray-50);
+    border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .cms-card:hover { border-color: var(--gray-200); }
+  .cms-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .cms-card-label {
+    font-size: 13px; font-weight: 600;
+    color: var(--gray-500); letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .cms-badge {
+    font-size: 11px; padding: 3px 10px;
+    background: var(--black); color: var(--white);
+    border-radius: 99px; font-weight: 600;
+  }
+  .cms-badge.gold { background: var(--gold); color: var(--white); }
+
+  /* CMS Fields */
+  .cms-field { margin-bottom: 14px; }
+  .cms-field label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--gray-500); margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .cms-field input, .cms-field textarea, .cms-field select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--black);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s;
+    direction: rtl;
+  }
+  .cms-field input:focus, .cms-field textarea:focus { border-color: var(--black); }
+  .cms-field textarea { min-height: 80px; resize: vertical; }
+  .cms-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cms-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* CMS Save button */
+  .cms-save-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 24px;
+    background: var(--black); color: var(--white);
+    border: none; border-radius: 12px;
+    font-family: var(--font-body); font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .cms-save-btn:hover { background: var(--gray-700); transform: translateY(-1px); }
+  .cms-save-btn.gold-btn { background: var(--gold); }
+  .cms-save-btn.gold-btn:hover { background: #b8922a; }
+
+  .cms-delete-btn {
+    padding: 8px 16px;
+    background: transparent; color: #e55;
+    border: 1.5px solid #e55; border-radius: 10px;
+    font-family: var(--font-body); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .cms-delete-btn:hover { background: #e55; color: var(--white); }
+
+  .cms-add-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    background: transparent; color: var(--black);
+    border: 1.5px dashed var(--gray-300);
+    border-radius: 12px;
+    font-family: var(--font-body); font-size: 14px; font-weight: 600;
+    cursor: pointer; width: 100%;
+    justify-content: center;
+    transition: all 0.2s; margin-top: 8px;
+  }
+  .cms-add-btn:hover { border-color: var(--black); background: var(--gray-50); }
+
+  /* Toast notification */
+  .cms-toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--black); color: var(--white);
+    padding: 14px 28px; border-radius: 99px;
+    font-size: 14px; font-weight: 600;
+    z-index: 99999;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), opacity 0.4s;
+    opacity: 0; pointer-events: none;
+    white-space: nowrap;
+  }
+  .cms-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .cms-toast.success { background: #22c55e; }
+  .cms-toast.error { background: #ef4444; }
+
+  /* Social project editor */
+  .social-proj-list { display: flex; flex-direction: column; gap: 12px; }
+  .social-proj-item {
+    background: var(--white);
+    border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .social-proj-item-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .social-proj-item-header:hover { background: var(--gray-50); }
+  .social-proj-color-dot {
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  }
+  .social-proj-item-name { font-weight: 600; font-size: 14px; flex: 1; }
+  .social-proj-item-folder { font-size: 12px; color: var(--gray-500); }
+  .social-proj-chevron { transition: transform 0.2s; font-size: 12px; color: var(--gray-500); }
+  .social-proj-item.open .social-proj-chevron { transform: rotate(180deg); }
+  .social-proj-item-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--gray-100); padding-top: 16px; }
+  .social-proj-item.open .social-proj-item-body { display: block; }
+
+  /* Stats editor */
+  .stat-edit-row {
+    display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px;
+    align-items: center; margin-bottom: 8px;
+  }
+
+  /* Folder info box */
+  .folder-info-box {
+    background: linear-gradient(135deg,#1a1a2e11,#0f346011);
+    border: 1.5px solid var(--gray-200);
+    border-radius: 12px; padding: 14px 18px;
+    margin-top: 12px; font-size: 13px;
+    color: var(--gray-500); line-height: 1.7;
+  }
+  .folder-info-box code {
+    background: var(--gray-100); padding: 2px 8px;
+    border-radius: 6px; font-size: 12px; color: var(--black);
+  }
+
   .admin-login {
     max-width: 420px; margin: 80px auto;
     background: var(--white);
@@ -1818,10 +2067,10 @@
     .portfolio-header { flex-direction: column; align-items: flex-start; }
 
     .social-grid { grid-template-columns: repeat(2, 1fr); }
-    .social-lightbox-gallery { grid-template-columns: 1fr 1fr; padding: 20px 24px 28px; }
-    .social-lightbox-item.wide { grid-column: span 1; aspect-ratio: 1 / 1; }
-    .social-lightbox-header { padding: 24px 24px 18px; }
-    .social-lightbox-box { border-radius: var(--radius-lg); }
+    .social-lightbox-gallery { grid-template-columns: 1fr 1fr; padding: 20px 20px 28px; gap: 12px; }
+    .social-lightbox-item.wide { grid-column: span 2; aspect-ratio: 2 / 1; }
+    .social-lightbox-header { padding: 20px 20px 16px; }
+    .img-zoom-content { width: min(94vw, 94vh); height: min(94vw, 94vh); }
     .testi-grid { grid-template-columns: 1fr 1fr; }
     /* Mobile hero-scroll: relative flow, centered under buttons */
     .hero-scroll {
@@ -1843,8 +2092,14 @@
   }
 
   @media (max-width: 600px) {
+    /* الكروت الرئيسية: تصميم واحد في كل صف */
     .social-grid { grid-template-columns: 1fr; gap: 14px; }
-    .social-lightbox-gallery { grid-template-columns: 1fr; gap: 14px; padding: 16px; }
+    /* التصاميم الداخلية: تصميم واحد في كل صف */
+    .social-lightbox-gallery { grid-template-columns: 1fr; gap: 14px; padding: 16px 16px 24px; }
+    .social-lightbox-item.wide { grid-column: span 1; aspect-ratio: 1 / 1; }
+    /* الزوم: مربع كامل يملأ الشاشة */
+    .img-zoom-content { width: 96vw; height: 96vw; border-radius: var(--radius-sm); }
+    .img-zoom-close { top: 12px; left: 12px; width: 40px; height: 40px; font-size: 18px; }
     .all-projects-grid { grid-template-columns: 1fr; }
     .detail-gallery { grid-template-columns: 1fr; }
     .detail-gallery-item:first-child { grid-column: span 1; }
@@ -2509,66 +2764,200 @@
     <div class="admin-dashboard" id="adminDashboard">
       <div class="admin-header">
         <div>
-          <h2>لوحة التحكم</h2>
-          <p>إدارة طلبات الخدمة الواردة</p>
+          <h2>لوحة التحكم الكاملة</h2>
+          <p>إدارة جميع محتويات الموقع والطلبات الواردة</p>
         </div>
         <button class="admin-logout" onclick="adminLogout()">خروج</button>
       </div>
 
-      <div class="supabase-notice" id="supabaseNotice">
-        <strong>⚙️ إعداد قاعدة البيانات (Supabase)</strong><br>
-        لتفعيل حفظ البيانات، أضف مفتاح Supabase في متغيرات الإعداد أعلى الـ JavaScript:<br>
-        <code>SUPABASE_URL</code> و <code>SUPABASE_KEY</code><br>
-        ثم أنشئ جدولاً باسم <code>service_requests</code> بالأعمدة: phone, email, contact_methods, service, status, created_at.<br>
-        في الوقت الحالي، الطلبات محفوظة مؤقتاً في الجلسة الحالية.
+      <!-- TABS -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchTab('tab-requests',this)">📋 الطلبات</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-hero',this)">🏠 الهيرو</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-stats',this)">📊 الإحصائيات</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-services',this)">⚙️ الخدمات</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-about',this)">👥 من نحن</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-projects',this)">🗂️ المشاريع</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-social',this)">📱 سوشيال ميديا</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-contact',this)">📞 التواصل</button>
+        <button class="admin-tab-btn" onclick="switchTab('tab-footer',this)">🔗 الفوتر</button>
       </div>
 
-      <div class="admin-stats">
-        <div class="admin-stat-card">
-          <div class="admin-stat-label">إجمالي الطلبات</div>
-          <div class="admin-stat-num" id="statTotal">0</div>
+      <!-- ══ TAB: REQUESTS ══ -->
+      <div class="admin-tab-panel active" id="tab-requests">
+        <div class="supabase-notice" id="supabaseNotice" style="display:none">
+          <strong>⚙️ إعداد Supabase</strong><br>أضف SUPABASE_URL و SUPABASE_KEY في متغيرات JS لتفعيل قاعدة البيانات.
         </div>
-        <div class="admin-stat-card">
-          <div class="admin-stat-label">طلبات جديدة</div>
-          <div class="admin-stat-num" id="statNew">0</div>
+        <div class="admin-stats">
+          <div class="admin-stat-card"><div class="admin-stat-label">إجمالي الطلبات</div><div class="admin-stat-num" id="statTotal">0</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-label">طلبات جديدة</div><div class="admin-stat-num" id="statNew">0</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-label">تم التواصل</div><div class="admin-stat-num" id="statContacted">0</div></div>
+          <div class="admin-stat-card"><div class="admin-stat-label">اليوم</div><div class="admin-stat-num" id="statToday">0</div></div>
         </div>
-        <div class="admin-stat-card">
-          <div class="admin-stat-label">تم التواصل</div>
-          <div class="admin-stat-num" id="statContacted">0</div>
+        <div class="admin-requests-header">
+          <div class="admin-requests-title">الطلبات الواردة</div>
+          <button class="admin-refresh" onclick="loadRequests()">🔄 تحديث</button>
         </div>
-        <div class="admin-stat-card">
-          <div class="admin-stat-label">اليوم</div>
-          <div class="admin-stat-num" id="statToday">0</div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead><tr><th>#</th><th>رقم الهاتف</th><th>البريد</th><th>طريقة التواصل</th><th>الخدمة</th><th>التاريخ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+            <tbody id="requestsTableBody"><tr><td colspan="8" class="admin-loading">جاري التحميل...</td></tr></tbody>
+          </table>
         </div>
       </div>
 
-      <div class="admin-requests-header">
-        <div class="admin-requests-title">الطلبات الواردة</div>
-        <button class="admin-refresh" onclick="loadRequests()">🔄 تحديث</button>
+      <!-- ══ TAB: HERO ══ -->
+      <div class="admin-tab-panel" id="tab-hero">
+        <div class="cms-section-title"><span>🏠</span> قسم الهيرو — الصفحة الرئيسية</div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">العنوان الرئيسي</div><div class="cms-badge">3 أسطر</div></div>
+          <div class="cms-field"><label>السطر الأول</label><input type="text" id="hero-line1" placeholder="نصنع تجارب"></div>
+          <div class="cms-field"><label>السطر الثاني — الكلمة المائلة</label><input type="text" id="hero-line2-accent" placeholder="رقمية"></div>
+          <div class="cms-field"><label>السطر الثاني — الكلمة الذهبية</label><input type="text" id="hero-line2-gold" placeholder="استثنائية"></div>
+          <div class="cms-field"><label>السطر الثالث</label><input type="text" id="hero-line3" placeholder="تبقى في الذاكرة"></div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">النص التوضيحي والشارة</div></div>
+          <div class="cms-field"><label>نص الشارة العائمة (متاحون للمشاريع الجديدة)</label><input type="text" id="hero-badge"></div>
+          <div class="cms-field"><label>النص التوضيحي تحت العنوان</label><textarea id="hero-sub"></textarea></div>
+          <div class="cms-row">
+            <div class="cms-field"><label>نص زر أعمالنا</label><input type="text" id="hero-btn1"></div>
+            <div class="cms-field"><label>نص زر ابدأ مشروعك</label><input type="text" id="hero-btn2"></div>
+          </div>
+        </div>
+        <button class="cms-save-btn" onclick="cmsApplyHero()">💾 حفظ وتطبيق الهيرو</button>
       </div>
 
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>رقم الهاتف</th>
-              <th>البريد الإلكتروني</th>
-              <th>طريقة التواصل</th>
-              <th>الخدمة</th>
-              <th>التاريخ</th>
-              <th>الحالة</th>
-              <th>إجراءات</th>
-            </tr>
-          </thead>
-          <tbody id="requestsTableBody">
-            <tr>
-              <td colspan="8" class="admin-loading">جاري التحميل...</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- ══ TAB: STATS ══ -->
+      <div class="admin-tab-panel" id="tab-stats">
+        <div class="cms-section-title"><span>📊</span> شريط الإحصائيات</div>
+        <div class="cms-card" id="stats-editor">
+          <!-- rendered by JS -->
+        </div>
+        <button class="cms-save-btn" onclick="cmsApplyStats()">💾 حفظ وتطبيق الإحصائيات</button>
       </div>
-    </div>
+
+      <!-- ══ TAB: SERVICES ══ -->
+      <div class="admin-tab-panel" id="tab-services">
+        <div class="cms-section-title"><span>⚙️</span> قسم الخدمات</div>
+        <div class="cms-card">
+          <div class="cms-field"><label>عنوان القسم — السطر الأول</label><input type="text" id="svc-title1" placeholder="نقدم حلولاً"></div>
+          <div class="cms-field"><label>عنوان القسم — السطر الثاني</label><input type="text" id="svc-title2" placeholder="إبداعية متكاملة"></div>
+        </div>
+        <div id="services-editor"></div>
+        <button class="cms-add-btn" onclick="cmsAddService()">+ إضافة خدمة جديدة</button>
+        <br>
+        <button class="cms-save-btn" onclick="cmsApplyServices()">💾 حفظ وتطبيق الخدمات</button>
+      </div>
+
+      <!-- ══ TAB: ABOUT ══ -->
+      <div class="admin-tab-panel" id="tab-about">
+        <div class="cms-section-title"><span>👥</span> قسم من نحن</div>
+        <div class="cms-card">
+          <div class="cms-field"><label>عنوان القسم (3 أسطر مفصولة بـ |)</label><textarea id="about-title" style="direction:rtl"></textarea></div>
+          <div class="cms-field"><label>النص التوضيحي الرئيسي</label><textarea id="about-text" style="min-height:120px"></textarea></div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">القائمة النقطية</div></div>
+          <div id="about-list-editor"></div>
+          <button class="cms-add-btn" onclick="cmsAddAboutItem()">+ إضافة نقطة</button>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">البطاقات العائمة</div></div>
+          <div class="cms-row">
+            <div>
+              <div class="cms-field"><label>بطاقة 1 — العنوان</label><input type="text" id="about-float1-label"></div>
+              <div class="cms-field"><label>بطاقة 1 — القيمة</label><input type="text" id="about-float1-val"></div>
+              <div class="cms-field"><label>بطاقة 1 — النص الفرعي</label><input type="text" id="about-float1-sub"></div>
+            </div>
+            <div>
+              <div class="cms-field"><label>بطاقة 2 — العنوان</label><input type="text" id="about-float2-label"></div>
+              <div class="cms-field"><label>بطاقة 2 — القيمة</label><input type="text" id="about-float2-val"></div>
+              <div class="cms-field"><label>بطاقة 2 — النص الفرعي</label><input type="text" id="about-float2-sub"></div>
+            </div>
+          </div>
+        </div>
+        <button class="cms-save-btn" onclick="cmsApplyAbout()">💾 حفظ وتطبيق من نحن</button>
+      </div>
+
+      <!-- ══ TAB: PROJECTS ══ -->
+      <div class="admin-tab-panel" id="tab-projects">
+        <div class="cms-section-title"><span>🗂️</span> المشاريع — قسم أعمالنا</div>
+        <div class="cms-card">
+          <div class="cms-row">
+            <div class="cms-field"><label>عنوان قسم أعمالنا — السطر الأول</label><input type="text" id="port-title1" placeholder="مشاريع تتحدث"></div>
+            <div class="cms-field"><label>عنوان قسم أعمالنا — السطر الثاني</label><input type="text" id="port-title2" placeholder="عن نفسها"></div>
+          </div>
+        </div>
+        <div id="projects-editor"></div>
+        <button class="cms-add-btn" onclick="cmsAddProject()">+ إضافة مشروع جديد</button>
+        <br>
+        <button class="cms-save-btn" onclick="cmsApplyProjects()">💾 حفظ وتطبيق المشاريع</button>
+      </div>
+
+      <!-- ══ TAB: SOCIAL MEDIA ══ -->
+      <div class="admin-tab-panel" id="tab-social">
+        <div class="cms-section-title"><span>📱</span> تصاميم سوشيال ميديا</div>
+        <div class="cms-card">
+          <div class="cms-row">
+            <div class="cms-field"><label>عنوان القسم — السطر الأول</label><input type="text" id="social-title1" placeholder="محتوى رقمي"></div>
+            <div class="cms-field"><label>عنوان القسم — السطر الثاني</label><input type="text" id="social-title2" placeholder="يصنع الأثر"></div>
+          </div>
+          <div class="cms-field"><label>النص التوضيحي</label><textarea id="social-desc"></textarea></div>
+        </div>
+        <div class="folder-info-box">
+          📂 <strong>نظام الصور التلقائي:</strong><br>
+          صورة الغلاف: <code>pictures/[folder]/1.png</code><br>
+          التصاميم الداخلية: <code>pictures/[folder]/2.png</code>, <code>3.png</code>, <code>4.png</code> ... حتى آخر رقم<br>
+          أضف أي صورة جديدة للمجلد وستظهر تلقائياً دون تعديل الكود ✓
+        </div>
+        <br>
+        <div id="social-projects-editor" class="social-proj-list"></div>
+        <button class="cms-add-btn" onclick="cmsAddSocialProject()">+ إضافة مشروع سوشيال ميديا</button>
+        <br>
+        <button class="cms-save-btn" onclick="cmsApplySocial()">💾 حفظ وتطبيق سوشيال ميديا</button>
+      </div>
+
+      <!-- ══ TAB: CONTACT ══ -->
+      <div class="admin-tab-panel" id="tab-contact">
+        <div class="cms-section-title"><span>📞</span> قسم التواصل</div>
+        <div class="cms-card">
+          <div class="cms-field"><label>العنوان — السطر الأول</label><input type="text" id="contact-title1" placeholder="هل أنت مستعد"></div>
+          <div class="cms-field"><label>العنوان — السطر الثاني (كلمة highlight)</label><input type="text" id="contact-title2" placeholder="استثنائي؟"></div>
+          <div class="cms-field"><label>النص التوضيحي</label><textarea id="contact-text"></textarea></div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">معلومات التواصل</div></div>
+          <div class="cms-field"><label>البريد الإلكتروني</label><input type="email" id="contact-email"></div>
+          <div class="cms-field"><label>رقم الهاتف</label><input type="text" id="contact-phone"></div>
+          <div class="cms-field"><label>الموقع / المدينة</label><input type="text" id="contact-location"></div>
+        </div>
+        <button class="cms-save-btn" onclick="cmsApplyContact()">💾 حفظ وتطبيق التواصل</button>
+      </div>
+
+      <!-- ══ TAB: FOOTER ══ -->
+      <div class="admin-tab-panel" id="tab-footer">
+        <div class="cms-section-title"><span>🔗</span> الفوتر</div>
+        <div class="cms-card">
+          <div class="cms-field"><label>اسم الوكالة (الشعار النصي)</label><input type="text" id="footer-logo"></div>
+          <div class="cms-field"><label>وصف الوكالة</label><textarea id="footer-tagline"></textarea></div>
+          <div class="cms-field"><label>نص حقوق النشر</label><input type="text" id="footer-copy"></div>
+        </div>
+        <div class="cms-card">
+          <div class="cms-card-header"><div class="cms-card-label">روابط السوشيال ميديا</div></div>
+          <div class="cms-row">
+            <div class="cms-field"><label>إنستغرام</label><input type="url" id="footer-ig"></div>
+            <div class="cms-field"><label>لينكدإن</label><input type="url" id="footer-li"></div>
+          </div>
+          <div class="cms-row">
+            <div class="cms-field"><label>تويتر / X</label><input type="url" id="footer-tw"></div>
+            <div class="cms-field"><label>بيهانس</label><input type="url" id="footer-be"></div>
+          </div>
+        </div>
+        <button class="cms-save-btn" onclick="cmsApplyFooter()">💾 حفظ وتطبيق الفوتر</button>
+      </div>
+
+    </div><!-- /admin-dashboard -->
   </div>
 </div>
 
@@ -2702,13 +3091,24 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════
+     IMAGE ZOOM VIEWER
+═══════════════════════════════════════ -->
+<div id="imgZoomOverlay" class="img-zoom-overlay" onclick="closeImgZoom(event)">
+  <div class="img-zoom-inner">
+    <button class="img-zoom-close" onclick="closeImgZoom(event)">✕</button>
+    <div class="img-zoom-content">
+      <div class="img-zoom-content-bg" id="imgZoomBg">
+        <img id="imgZoomImg" src="" alt="تصميم" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   CONFIGURATION — replace with your Supabase details
-═══════════════════════════════════════════════════════ */
-const SUPABASE_URL = ''; // e.g. 'https://xxxx.supabase.co'
-const SUPABASE_KEY = ''; // your anon public key
+const SUPABASE_URL = 'https://ohifdiqdnkuqvmbaqguo.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_4jbgNhPIFPSl77MMnKnW-A_dMe0yKjw';
 const ADMIN_PASSWORD = 'admin123'; // change this!
 
 /* ═══════════════════════════════════════════════════════
@@ -3198,9 +3598,10 @@ function adminLogin() {
   if (pass === ADMIN_PASSWORD && (user === 'admin' || user === 'إبداع')) {
     document.getElementById('adminLoginSection').style.display = 'none';
     document.getElementById('adminDashboard').style.display = 'block';
-    if (!SUPABASE_URL) document.getElementById('supabaseNotice').style.display = 'block';
-    else document.getElementById('supabaseNotice').style.display = 'none';
+    document.getElementById('supabaseNotice').style.display = 'none';
     loadRequests();
+    populateCmsForms(); // ← تعبئة أولية من localStorage
+    _cmsLoad().then(() => populateCmsForms()); // ← تحديث من Supabase
   } else {
     document.getElementById('adminError').style.display = 'block';
     document.getElementById('adminPass').value = '';
@@ -3418,6 +3819,14 @@ if (testiGrid) {
 
 /* ═══════════════════════════════════════════════════════
    SOCIAL MEDIA PROJECTS DATA & RENDERING
+   
+   نظام الصور التلقائي:
+   - صورة الغلاف:  pictures/[folder]/1.png
+   - التصاميم الداخلية: pictures/[folder]/2.png, 3.png, 4.png ...
+   - أضف أي صورة جديدة للمجلد وستظهر تلقائياً
+   
+   أسماء المجلدات المقترحة:
+   nofa | nofa2 | nofa3 | nofa4 | nofa5 | nofa6 | nofa7 | nofa8
 ═══════════════════════════════════════════════════════ */
 const socialProjects = [
   {
@@ -3426,14 +3835,8 @@ const socialProjects = [
     cat: 'تقنية مالية · سوشيال ميديا',
     desc: 'سلسلة منشورات لإطلاق تطبيق نوفا المصرفي — استهدفت جيل الشباب بتصاميم ديناميكية.',
     coverBg: 'linear-gradient(135deg,#1a1a2e,#0f3460,#533483)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#1a1a2e,#0f3460)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#533483,#1a1a2e)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#0f3460,#533483)', type: 'إعلان' },
-      { bg: 'linear-gradient(135deg,#16213e,#1a1a2e)', type: 'ستوري' },
-      { bg: 'linear-gradient(45deg,#533483,#0f3460)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#1a1a2e,#533483)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa',
+    count: 6, // عدد التصاميم الداخلية (من 2.png إلى هذا الرقم+1)
   },
   {
     id: 'sm-1',
@@ -3441,14 +3844,8 @@ const socialProjects = [
     cat: 'مجوهرات · حملة موسمية',
     desc: 'تصاميم رمضانية فاخرة لماركة ذهب — مزجت بين الأصالة والحداثة بأسلوب ذهبي راقٍ.',
     coverBg: 'linear-gradient(135deg,#c9a84c,#8b6914,#5a4010)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#c9a84c,#5a4010)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#8b6914,#c9a84c)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#5a4010,#e8c97a)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#c9a84c,#8b6914)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#e8c97a,#c9a84c)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#8b6914,#5a4010)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa2',
+    count: 6,
   },
   {
     id: 'sm-2',
@@ -3456,14 +3853,8 @@ const socialProjects = [
     cat: 'عناية بالبشرة · محتوى رقمي',
     desc: 'محتوى إبداعي لإطلاق مجموعة الصيف من لونا — بأسلوب ناعم وألوان تعبّر عن الطبيعة.',
     coverBg: 'linear-gradient(135deg,#ffecd2,#fcb69f,#e8a87c)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#ffecd2,#fcb69f)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#fcb69f,#ffecd2)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#e8a87c,#fcb69f)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#ffecd2,#e8a87c)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#fcb69f,#e8a87c)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#ffecd2,#e8a87c)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa3',
+    count: 6,
   },
   {
     id: 'sm-3',
@@ -3471,14 +3862,8 @@ const socialProjects = [
     cat: 'تكنولوجيا · هوية رقمية',
     desc: 'سلسلة إعلانية تُعرّف بعلامة برق للتكنولوجيا — بتصاميم ديناميكية تعكس الابتكار والسرعة.',
     coverBg: 'linear-gradient(135deg,#f7971e,#ffd200)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#f7971e,#ffd200)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#ffd200,#f7971e)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#f7971e,#fff)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#ffd200,#fff)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#f7971e,#ffd200)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#ffd200,#f7971e)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa4',
+    count: 6,
   },
   {
     id: 'sm-4',
@@ -3486,14 +3871,8 @@ const socialProjects = [
     cat: 'فنادق · محتوى سياحي',
     desc: 'محتوى بصري فاخر لفنادق سما — يُبرز تفاصيل تجربة الضيافة بأسلوب راقٍ وجذاب.',
     coverBg: 'linear-gradient(135deg,#232526,#414345,#6a6a6a)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#232526,#414345)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#414345,#232526)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#232526,#5a5a5a)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#6a6a6a,#232526)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#414345,#6a6a6a)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#232526,#414345)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa5',
+    count: 6,
   },
   {
     id: 'sm-5',
@@ -3501,14 +3880,8 @@ const socialProjects = [
     cat: 'عقارات · حملة إطلاق',
     desc: 'حملة رقمية متكاملة لإطلاق مشروع قمم السكني — صممت لتوليد الاهتمام وتحقيق أعلى نسب تفاعل.',
     coverBg: 'linear-gradient(135deg,#141e30,#243b55,#34495e)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#141e30,#243b55)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#243b55,#141e30)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#141e30,#34495e)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#34495e,#141e30)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#243b55,#34495e)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#141e30,#243b55)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa6',
+    count: 6,
   },
   {
     id: 'sm-6',
@@ -3516,14 +3889,8 @@ const socialProjects = [
     cat: 'طاقة · توعية بيئية',
     desc: 'محتوى توعوي وتسويقي لرياح للطاقة المتجددة — يُبسّط مفاهيم الطاقة النظيفة بتصاميم ملهمة.',
     coverBg: 'linear-gradient(135deg,#134e5e,#71b280,#a8e6cf)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#134e5e,#71b280)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#71b280,#134e5e)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#134e5e,#a8e6cf)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#a8e6cf,#134e5e)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#71b280,#a8e6cf)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#134e5e,#71b280)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa7',
+    count: 6,
   },
   {
     id: 'sm-7',
@@ -3531,50 +3898,99 @@ const socialProjects = [
     cat: 'عقارات فاخرة · تسويق رقمي',
     desc: 'سلسلة منشورات راقية لأطلس العقارية — تستهدف شريحة المستثمرين بتصاميم تُجسّد الفخامة.',
     coverBg: 'linear-gradient(135deg,#2d1b69,#11998e,#38ef7d)',
-    posts: [
-      { bg: 'linear-gradient(135deg,#2d1b69,#11998e)', type: 'رئيسي', wide: true },
-      { bg: 'linear-gradient(135deg,#11998e,#38ef7d)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#2d1b69,#38ef7d)', type: 'إعلان' },
-      { bg: 'linear-gradient(45deg,#38ef7d,#2d1b69)', type: 'منشور' },
-      { bg: 'linear-gradient(135deg,#11998e,#2d1b69)', type: 'ستوري' },
-      { bg: 'linear-gradient(135deg,#38ef7d,#11998e)', type: 'ريلز' },
-    ],
+    folder: 'pictures/nofa8',
+    count: 6,
   },
 ];
 
-// Render social grid
-const socialGrid = document.getElementById('socialGrid');
-if (socialGrid) {
-  socialGrid.innerHTML = socialProjects.map((p, idx) => `
-    <div class="social-card reveal" style="transition-delay:${(idx % 4) * 0.08}s" onclick="openSocialLightbox(${idx})">
-      <div class="social-card-bg" style="background:${p.coverBg}"></div>
-      <div class="social-card-overlay">
-        <div class="social-card-client">${p.cat}</div>
-        <div class="social-card-title">${p.title}</div>
-        <div class="social-card-count">${p.posts.length} تصميم</div>
-      </div>
-      <div class="social-card-zoom-icon">⊕</div>
-    </div>
-  `).join('');
-  // Re-observe new reveal elements
-  socialGrid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+/* ─────────────────────────────────────────────────────
+   مساعد: يبني مسار الصورة ويختبرها، يعيد Promise<string|null>
+───────────────────────────────────────────────────── */
+function probeImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(src);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
 }
 
-// Open/close social lightbox
-function openSocialLightbox(idx) {
+/* ─────────────────────────────────────────────────────
+   يكتشف تلقائياً كم صورة موجودة في المجلد
+   يبدأ من 2.png ويكمل حتى يجد صورة غير موجودة
+───────────────────────────────────────────────────── */
+async function discoverImages(folder, hintCount) {
+  const results = [];
+  // نبدأ من 2 (لأن 1 هي الغلاف) ونتحقق حتى hintCount+10 لاستيعاب أي إضافات مستقبلية
+  const maxCheck = hintCount + 10;
+  for (let i = 2; i <= maxCheck; i++) {
+    const src = `${folder}/${i}.png`;
+    const found = await probeImage(src);
+    if (found) {
+      results.push(src);
+    } else {
+      // إذا فشلت 3 أرقام متتالية نتوقف
+      const next1 = await probeImage(`${folder}/${i+1}.png`);
+      const next2 = await probeImage(`${folder}/${i+2}.png`);
+      if (!next1 && !next2) break;
+    }
+  }
+  return results;
+}
+
+/* ─────────────────────────────────────────────────────
+   Render social grid
+───────────────────────────────────────────────────── */
+// Initial render — uses renderSocialGrid() defined in CMS section
+if (document.getElementById('socialGrid')) {
+  renderSocialGrid();
+  // مراقبة البطاقات الجديدة بعد الرندر لأن الـ observer يعمل قبلها
+  document.querySelectorAll('#socialGrid .reveal').forEach(el => io.observe(el));
+}
+
+/* ─────────────────────────────────────────────────────
+   Open/close social lightbox — مع اكتشاف الصور تلقائياً
+───────────────────────────────────────────────────── */
+async function openSocialLightbox(idx) {
   const p = socialProjects[idx];
-  document.getElementById('slbCat').textContent = p.cat;
+  document.getElementById('slbCat').textContent   = p.cat;
   document.getElementById('slbTitle').textContent = p.title;
-  document.getElementById('slbDesc').textContent = p.desc;
+  document.getElementById('slbDesc').textContent  = p.desc;
+
   const gallery = document.getElementById('slbGallery');
-  gallery.innerHTML = p.posts.map(post => `
-    <div class="social-lightbox-item${post.wide ? ' wide' : ''}">
-      <div class="social-lightbox-item-bg" style="background:${post.bg}"></div>
-    </div>
-  `).join('');
+  // حالة تحميل مؤقتة
+  gallery.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--gray-300);font-size:14px;">جاري تحميل التصاميم...</div>`;
   document.getElementById('socialLightbox').classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  // اكتشاف الصور
+  const imgs = await discoverImages(p.folder, p.count);
+
+  // إذا لم توجد صور، نعرض placeholder بالألوان
+  if (imgs.length === 0) {
+    const placeholderBgs = [
+      'linear-gradient(135deg,rgba(0,0,0,0.15),rgba(0,0,0,0.05))',
+      'linear-gradient(45deg,rgba(0,0,0,0.1),rgba(0,0,0,0.2))',
+      'linear-gradient(135deg,rgba(0,0,0,0.2),rgba(0,0,0,0.08))',
+      'linear-gradient(90deg,rgba(0,0,0,0.05),rgba(0,0,0,0.18))',
+      'linear-gradient(135deg,rgba(0,0,0,0.12),rgba(0,0,0,0.22))',
+      'linear-gradient(45deg,rgba(0,0,0,0.18),rgba(0,0,0,0.06))',
+    ];
+    gallery.innerHTML = Array.from({length: p.count}, (_, i) => `
+      <div class="social-lightbox-item${i === 0 ? ' wide' : ''}" onclick="openImgZoom(${idx},${i},null,'${p.coverBg}')">
+        <div class="social-lightbox-item-bg" style="background:${p.coverBg};opacity:0.${7+i}"></div>
+      </div>`).join('');
+    return;
+  }
+
+  // عرض الصور المكتشفة
+  gallery.innerHTML = imgs.map((src, i) => `
+    <div class="social-lightbox-item${i === 0 ? ' wide' : ''}" onclick="openImgZoom(${idx},${i},'${src}','${p.coverBg}')">
+      <div class="social-lightbox-item-bg" style="background:${p.coverBg}"></div>
+      <img src="${src}" alt="تصميم ${i+1}" loading="lazy" onerror="this.style.display='none'">
+    </div>`).join('');
 }
+
 function closeSocialLightbox() {
   document.getElementById('socialLightbox').classList.remove('active');
   document.body.style.overflow = '';
@@ -3582,7 +3998,38 @@ function closeSocialLightbox() {
 function handleSocialLightboxOverlay(e) {
   if (e.target === document.getElementById('socialLightbox')) closeSocialLightbox();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialLightbox(); });
+
+/* ─────────────────────────────────────────────────────
+   Image zoom viewer
+───────────────────────────────────────────────────── */
+function openImgZoom(projectIdx, postIdx, imgSrc, bgColor) {
+  const overlay = document.getElementById('imgZoomOverlay');
+  const bgEl    = document.getElementById('imgZoomBg');
+  const imgEl   = document.getElementById('imgZoomImg');
+
+  bgEl.style.background = bgColor || socialProjects[projectIdx].coverBg;
+  if (imgSrc) {
+    imgEl.src = imgSrc;
+    imgEl.style.display = 'block';
+    imgEl.onerror = () => { imgEl.style.display = 'none'; };
+  } else {
+    imgEl.src = '';
+    imgEl.style.display = 'none';
+  }
+  overlay.classList.add('active');
+}
+function closeImgZoom(e) {
+  if (!e || e.target === document.getElementById('imgZoomOverlay') || e.currentTarget.classList.contains('img-zoom-close')) {
+    document.getElementById('imgZoomOverlay').classList.remove('active');
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeImgZoom({target: document.getElementById('imgZoomOverlay')});
+    closeSocialLightbox();
+  }
+});
 
 /* ═══════════════════════════════════════════════════════
    HERO PARALLAX
@@ -3633,6 +4080,722 @@ document.querySelector('.nav-logo').addEventListener('click', function(e) {
     showAdminPage();
   }
 });
+
+/* ═══════════════════════════════════════════════════════
+   CMS — FULL SITE CONTENT MANAGEMENT
+═══════════════════════════════════════════════════════ */
+
+// ══════════════════════════════════════════════════════════════
+//  CMS DATA — Supabase أولاً، localStorage احتياط
+// ══════════════════════════════════════════════════════════════
+let cmsData = JSON.parse(localStorage.getItem('cms_data') || 'null') || {};
+
+/* حفظ فوري في localStorage + Supabase في الخلفية */
+function saveCmsData() {
+  try { localStorage.setItem('cms_data', JSON.stringify(cmsData)); } catch(e){}
+  _cmsPush();
+}
+
+/* رفع بيانات CMS إلى Supabase (upsert بـ key ثابت "site") */
+async function _cmsPush() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/cms_data', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'resolution=merge-duplicates'
+      },
+      body: JSON.stringify({ id: 'site', data: cmsData, updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) {
+      const err = await res.text();
+      console.warn('CMS push error:', err);
+    }
+  } catch(e) { console.warn('CMS push failed:', e); }
+}
+
+/* تحميل بيانات CMS من Supabase */
+async function _cmsLoad() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/cms_data?id=eq.site&select=data', {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      }
+    });
+    if (!res.ok) return;
+    const rows = await res.json();
+    if (rows && rows[0] && rows[0].data) {
+      cmsData = rows[0].data;
+      try { localStorage.setItem('cms_data', JSON.stringify(cmsData)); } catch(e){}
+      applySavedCmsData();
+    }
+  } catch(e) { console.warn('CMS load failed:', e); }
+}
+
+function showToast(msg, type='success') {
+  let t = document.getElementById('cmsToast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'cmsToast';
+    t.className = 'cms-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.className = `cms-toast ${type} show`;
+  setTimeout(() => t.className = `cms-toast ${type}`, 2800);
+}
+
+// ── TAB SWITCHING ──
+function switchTab(panelId, btn) {
+  document.querySelectorAll('.admin-tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── POPULATE CMS FORMS ON DASHBOARD OPEN ──
+function populateCmsForms() {
+  // Hero
+  const h = cmsData.hero || {};
+  setValue('hero-line1', h.line1 || 'نصنع تجارب');
+  setValue('hero-line2-accent', h.line2accent || 'رقمية');
+  setValue('hero-line2-gold', h.line2gold || 'استثنائية');
+  setValue('hero-line3', h.line3 || 'تبقى في الذاكرة');
+  setValue('hero-badge', h.badge || 'متاحون للمشاريع الجديدة');
+  setValue('hero-sub', h.sub || 'وكالة إبداعية متكاملة تجمع بين الاستراتيجية والتصميم والتقنية لبناء علامات تجارية تفوق التوقعات');
+  setValue('hero-btn1', h.btn1 || 'استعرض أعمالنا');
+  setValue('hero-btn2', h.btn2 || 'ابدأ مشروعك');
+
+  // Stats
+  renderStatsEditor();
+
+  // Services
+  setValue('svc-title1', (cmsData.services||{}).title1 || 'نقدم حلولاً');
+  setValue('svc-title2', (cmsData.services||{}).title2 || 'إبداعية متكاملة');
+  renderServicesEditor();
+
+  // About
+  const a = cmsData.about || {};
+  setValue('about-title', a.title || 'نؤمن بأن|التصميم يغيّر|الواقع');
+  setValue('about-text', a.text || 'نحن فريق من المبدعين والمفكرين والمطورين الذين يجمعهم شغف واحد: تحويل الأفكار إلى تجارب رقمية تترك أثراً حقيقياً.\n\nمنذ تأسيسنا، ساعدنا أكثر من 180 علامة تجارية في المنطقة وحول العالم.');
+  setValue('about-float1-label', a.float1label || 'نسبة الرضا');
+  setValue('about-float1-val', a.float1val || '95%');
+  setValue('about-float1-sub', a.float1sub || 'من عملائنا يعودون');
+  setValue('about-float2-label', a.float2label || 'سنوات الخبرة');
+  setValue('about-float2-val', a.float2val || '12+');
+  setValue('about-float2-sub', a.float2sub || 'في السوق الرقمي');
+  renderAboutListEditor();
+
+  // Portfolio section title
+  setValue('port-title1', (cmsData.portfolio||{}).title1 || 'مشاريع تتحدث');
+  setValue('port-title2', (cmsData.portfolio||{}).title2 || 'عن نفسها');
+  renderProjectsEditor();
+
+  // Social
+  const s = cmsData.socialSection || {};
+  setValue('social-title1', s.title1 || 'محتوى رقمي');
+  setValue('social-title2', s.title2 || 'يصنع الأثر');
+  setValue('social-desc', s.desc || 'تصاميم منشورات احترافية لمنصات التواصل الاجتماعي — انقر على أي مشروع لاستعراض كامل الحملة');
+  renderSocialProjectsEditor();
+
+  // Contact
+  const c = cmsData.contact || {};
+  setValue('contact-title1', c.title1 || 'هل أنت مستعد');
+  setValue('contact-title2', c.title2 || 'استثنائي؟');
+  setValue('contact-text', c.text || 'نحن هنا لنحول رؤيتك إلى واقع. أخبرنا عن مشروعك وسنتواصل معك خلال 24 ساعة.');
+  setValue('contact-email', c.email || 'soufiane@rhafes.com');
+  setValue('contact-phone', c.phone || '+974 5009 7720');
+  setValue('contact-location', c.location || 'الدوحة، قطر');
+
+  // Footer
+  const f = cmsData.footer || {};
+  setValue('footer-logo', f.logo || 'إبداع');
+  setValue('footer-tagline', f.tagline || 'وكالة إبداعية متكاملة نصنع تجارب رقمية استثنائية تجمع بين الفن والتقنية.');
+  setValue('footer-copy', f.copy || '© 2025 إبداع. جميع الحقوق محفوظة.');
+  setValue('footer-ig', f.ig || '#');
+  setValue('footer-li', f.li || '#');
+  setValue('footer-tw', f.tw || '#');
+  setValue('footer-be', f.be || '#');
+}
+
+function getValue(id) { const el = document.getElementById(id); return el ? el.value : ''; }
+function setValue(id, val) { const el = document.getElementById(id); if (el) el.value = val || ''; }
+
+// ════════════════ HERO ════════════════
+function cmsApplyHero() {
+  const h = {
+    line1: getValue('hero-line1'),
+    line2accent: getValue('hero-line2-accent'),
+    line2gold: getValue('hero-line2-gold'),
+    line3: getValue('hero-line3'),
+    badge: getValue('hero-badge'),
+    sub: getValue('hero-sub'),
+    btn1: getValue('hero-btn1'),
+    btn2: getValue('hero-btn2'),
+  };
+  cmsData.hero = h; saveCmsData();
+
+  // Apply to DOM
+  const h1 = document.querySelector('.hero-headline');
+  if (h1) {
+    const lines = h1.querySelectorAll('.line');
+    if (lines[0]) lines[0].textContent = h.line1;
+    if (lines[1]) lines[1].innerHTML = `<em class="accent-word">${h.line2accent}</em> <span class="gold-word">${h.line2gold}</span>`;
+    if (lines[2]) lines[2].textContent = h.line3;
+  }
+  const badge = document.querySelector('.hero-badge');
+  if (badge) badge.innerHTML = `<span class="hero-badge-dot"></span>${h.badge}`;
+  const sub = document.querySelector('.hero-sub');
+  if (sub) sub.textContent = h.sub;
+  const btns = document.querySelectorAll('.hero-buttons button');
+  if (btns[0]) btns[0].textContent = h.btn1;
+  if (btns[1]) btns[1].textContent = h.btn2;
+  showToast('✓ تم تحديث الهيرو بنجاح');
+}
+
+// ════════════════ STATS ════════════════
+function getDefaultStats() {
+  return [
+    { num: 180, suffix: '+', label: 'مشروع منجز' },
+    { num: 95, suffix: '%', label: 'رضا العملاء' },
+    { num: 12, suffix: '+', label: 'سنة خبرة' },
+    { num: 40, suffix: '+', label: 'جائزة دولية' },
+  ];
+}
+
+function renderStatsEditor() {
+  const stats = cmsData.stats || getDefaultStats();
+  const el = document.getElementById('stats-editor');
+  if (!el) return;
+  el.innerHTML = stats.map((s, i) => `
+    <div class="cms-row-3" style="margin-bottom:12px;align-items:end">
+      <div class="cms-field" style="margin:0"><label>الرقم</label><input type="number" id="stat-num-${i}" value="${s.num}"></div>
+      <div class="cms-field" style="margin:0"><label>اللاحقة (+، %)</label><input type="text" id="stat-suf-${i}" value="${s.suffix}" style="direction:ltr"></div>
+      <div class="cms-field" style="margin:0"><label>التسمية</label><input type="text" id="stat-lbl-${i}" value="${s.label}"></div>
+    </div>`).join('');
+}
+
+function cmsApplyStats() {
+  const count = (cmsData.stats || getDefaultStats()).length;
+  const stats = Array.from({length: count}, (_, i) => ({
+    num: parseInt(getValue(`stat-num-${i}`))||0,
+    suffix: getValue(`stat-suf-${i}`),
+    label: getValue(`stat-lbl-${i}`),
+  }));
+  cmsData.stats = stats; saveCmsData();
+  // Apply to DOM
+  const items = document.querySelectorAll('.stat-item');
+  stats.forEach((s, i) => {
+    if (!items[i]) return;
+    const counter = items[i].querySelector('.counter');
+    const plus = items[i].querySelector('.gold-plus');
+    const lbl = items[i].querySelector('.stat-label');
+    if (counter) { counter.textContent = s.num; counter.dataset.target = s.num; }
+    if (plus) plus.textContent = s.suffix;
+    if (lbl) lbl.textContent = s.label;
+  });
+  showToast('✓ تم تحديث الإحصائيات');
+}
+
+// ════════════════ SERVICES ════════════════
+function getDefaultServices() {
+  return [
+    { icon:'✦', title:'الهوية البصرية والعلامة التجارية', desc:'نبني هويات بصرية استراتيجية تعكس جوهر علامتك التجارية وتتحدث بلغة جمهورك.', tags:'الشعار,دليل الهوية,المطبوعات,التغليف', large:true },
+    { icon:'◈', title:'تصميم تجربة المستخدم', desc:'واجهات رقمية تجمع بين الجمال والوظيفة لخلق تجارب مستخدم لا تُنسى.', tags:'UX Research,UI Design,Prototyping', large:false },
+    { icon:'⬡', title:'تطوير المواقع والتطبيقات', desc:'مواقع وتطبيقات سريعة وأنيقة مبنية بأحدث التقنيات لضمان أفضل أداء وتجربة.', tags:'Next.js,React,Mobile', large:false },
+    { icon:'◎', title:'الاستراتيجية الرقمية', desc:'نضع خارطة طريق رقمية واضحة تحول أهدافك إلى نتائج قابلة للقياس.', tags:'SEO,المحتوى,التحليلات', large:false },
+    { icon:'⬟', title:'التصوير والإنتاج الإبداعي', desc:'محتوى مرئي احترافي يرفع من قيمة علامتك ويخاطب الجمهور بشكل عاطفي عميق.', tags:'التصوير,الفيديو,الموشن', large:false },
+  ];
+}
+
+function renderServicesEditor() {
+  const svcs = cmsData.servicesData || getDefaultServices();
+  const el = document.getElementById('services-editor');
+  if (!el) return;
+  el.innerHTML = svcs.map((s, i) => `
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <div class="cms-card-label">خدمة ${i+1} ${s.large?'— <span style=color:var(--gold)>بطاقة كبيرة</span>':''}</div>
+        <button class="cms-delete-btn" onclick="cmsDeleteService(${i})">حذف</button>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field"><label>الأيقونة / الرمز</label><input type="text" id="svc-icon-${i}" value="${s.icon}" style="direction:ltr"></div>
+        <div class="cms-field"><label>عنوان الخدمة</label><input type="text" id="svc-title-${i}" value="${s.title}"></div>
+      </div>
+      <div class="cms-field"><label>الوصف</label><textarea id="svc-desc-${i}">${s.desc}</textarea></div>
+      <div class="cms-field"><label>الوسوم (مفصولة بفاصلة)</label><input type="text" id="svc-tags-${i}" value="${s.tags}" style="direction:ltr"></div>
+    </div>`).join('');
+}
+
+function cmsDeleteService(i) {
+  const svcs = cmsData.servicesData || getDefaultServices();
+  svcs.splice(i, 1);
+  cmsData.servicesData = svcs; saveCmsData();
+  renderServicesEditor();
+}
+
+function cmsAddService() {
+  const svcs = cmsData.servicesData || getDefaultServices();
+  svcs.push({ icon:'★', title:'خدمة جديدة', desc:'وصف الخدمة هنا.', tags:'وسم1,وسم2', large:false });
+  cmsData.servicesData = svcs; saveCmsData();
+  renderServicesEditor();
+}
+
+function cmsApplyServices() {
+  const svcs = cmsData.servicesData || getDefaultServices();
+  const count = document.querySelectorAll('[id^="svc-icon-"]').length;
+  const updated = Array.from({length: count}, (_, i) => ({
+    icon: getValue(`svc-icon-${i}`),
+    title: getValue(`svc-title-${i}`),
+    desc: getValue(`svc-desc-${i}`),
+    tags: getValue(`svc-tags-${i}`),
+    large: i === 0,
+  }));
+
+  // Section title
+  const t1 = getValue('svc-title1'), t2 = getValue('svc-title2');
+  const stEl = document.querySelector('#services .section-title');
+  if (stEl) stEl.innerHTML = `${t1}<br>${t2}`;
+
+  cmsData.services = { title1: t1, title2: t2 };
+  cmsData.servicesData = updated; saveCmsData();
+
+  // Apply to DOM
+  const grid = document.querySelector('.services-grid');
+  if (grid) {
+    grid.innerHTML = updated.map(s => `
+      <div class="service-card${s.large?' large':''} reveal">
+        <div class="service-icon">${s.icon}</div>
+        <div class="service-title">${s.title}</div>
+        <div class="service-desc">${s.desc}</div>
+        <div class="service-tags">${s.tags.split(',').map(t => `<span class="service-tag">${t.trim()}</span>`).join('')}</div>
+        <div class="service-arrow">←</div>
+      </div>`).join('');
+  }
+  showToast('✓ تم تحديث الخدمات');
+}
+
+// ════════════════ ABOUT ════════════════
+function renderAboutListEditor() {
+  const items = cmsData.about?.list || ['نهج استراتيجي يبدأ بفهم عميق لعملك وجمهورك','تصميم مدروس يجمع بين الجمال والفاعلية','شراكة حقيقية تتجاوز تسليم المشروع'];
+  const el = document.getElementById('about-list-editor');
+  if (!el) return;
+  el.innerHTML = items.map((item, i) => `
+    <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
+      <input type="text" id="about-list-${i}" value="${item}" style="flex:1;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:10px;font-family:var(--font-body);font-size:14px;direction:rtl">
+      <button onclick="cmsDeleteAboutItem(${i})" style="padding:8px 12px;background:transparent;border:1.5px solid #e55;border-radius:8px;color:#e55;cursor:pointer;font-size:13px;flex-shrink:0">✕</button>
+    </div>`).join('');
+}
+
+function cmsDeleteAboutItem(i) {
+  if (!cmsData.about) cmsData.about = {};
+  const items = cmsData.about.list || ['نهج استراتيجي','تصميم مدروس','شراكة حقيقية'];
+  items.splice(i, 1);
+  cmsData.about.list = items; saveCmsData();
+  renderAboutListEditor();
+}
+
+function cmsAddAboutItem() {
+  if (!cmsData.about) cmsData.about = {};
+  const items = cmsData.about.list || ['نهج استراتيجي','تصميم مدروس','شراكة حقيقية'];
+  items.push('نقطة جديدة');
+  cmsData.about.list = items; saveCmsData();
+  renderAboutListEditor();
+}
+
+function cmsApplyAbout() {
+  const listCount = document.querySelectorAll('[id^="about-list-"]').length;
+  const list = Array.from({length: listCount}, (_, i) => getValue(`about-list-${i}`));
+  const titleRaw = getValue('about-title');
+  const titleLines = titleRaw.split('|');
+
+  if (!cmsData.about) cmsData.about = {};
+  Object.assign(cmsData.about, {
+    title: titleRaw,
+    text: getValue('about-text'),
+    list,
+    float1label: getValue('about-float1-label'),
+    float1val: getValue('about-float1-val'),
+    float1sub: getValue('about-float1-sub'),
+    float2label: getValue('about-float2-label'),
+    float2val: getValue('about-float2-val'),
+    float2sub: getValue('about-float2-sub'),
+  });
+  saveCmsData();
+
+  // Apply to DOM
+  const stEl = document.querySelector('#about .section-title');
+  if (stEl) stEl.innerHTML = titleLines.join('<br>');
+  const textEl = document.querySelector('.about-text');
+  if (textEl) textEl.innerHTML = getValue('about-text').replace(/\n/g, '<br>');
+  const listEl = document.querySelector('.about-list');
+  if (listEl) listEl.innerHTML = list.map(li => `<li>${li}</li>`).join('');
+  const f1l = document.querySelector('.about-card-float-1 .about-float-label');
+  const f1v = document.querySelector('.about-card-float-1 .about-float-value');
+  const f1s = document.querySelector('.about-card-float-1 .about-float-sub');
+  if (f1l) f1l.textContent = cmsData.about.float1label;
+  if (f1v) f1v.textContent = cmsData.about.float1val;
+  if (f1s) f1s.textContent = cmsData.about.float1sub;
+  const f2l = document.querySelector('.about-card-float-2 .about-float-label');
+  const f2v = document.querySelector('.about-card-float-2 .about-float-value');
+  const f2s = document.querySelector('.about-card-float-2 .about-float-sub');
+  if (f2l) f2l.textContent = cmsData.about.float2label;
+  if (f2v) f2v.textContent = cmsData.about.float2val;
+  if (f2s) f2s.textContent = cmsData.about.float2sub;
+
+  showToast('✓ تم تحديث قسم من نحن');
+}
+
+// ════════════════ PROJECTS ════════════════
+function renderProjectsEditor() {
+  const prjs = cmsData.projectsData || projects.map(p => ({
+    title: p.title, cat: p.cat, desc: p.desc, client: p.client,
+    services: p.services, year: p.year, duration: p.duration,
+    bg: p.bg, tags: p.tags.join(','),
+  }));
+  const el = document.getElementById('projects-editor');
+  if (!el) return;
+  el.innerHTML = prjs.map((p, i) => `
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <div class="cms-card-label">مشروع ${i+1}</div>
+        <button class="cms-delete-btn" onclick="cmsDeleteProject(${i})">حذف</button>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field"><label>اسم المشروع</label><input type="text" id="prj-title-${i}" value="${p.title}"></div>
+        <div class="cms-field"><label>الفئة</label><input type="text" id="prj-cat-${i}" value="${p.cat}"></div>
+      </div>
+      <div class="cms-field"><label>الوصف الكامل</label><textarea id="prj-desc-${i}" style="min-height:70px">${p.desc}</textarea></div>
+      <div class="cms-row">
+        <div class="cms-field"><label>اسم العميل</label><input type="text" id="prj-client-${i}" value="${p.client||''}"></div>
+        <div class="cms-field"><label>الخدمات المقدمة</label><input type="text" id="prj-services-${i}" value="${p.services||''}"></div>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field"><label>السنة</label><input type="text" id="prj-year-${i}" value="${p.year||'2024'}"></div>
+        <div class="cms-field"><label>المدة</label><input type="text" id="prj-dur-${i}" value="${p.duration||'3 أشهر'}"></div>
+      </div>
+      <div class="cms-row">
+        <div class="cms-field"><label>تدرج الألوان (CSS)</label><input type="text" id="prj-bg-${i}" value="${p.bg||''}" style="direction:ltr;font-size:12px"></div>
+        <div class="cms-field"><label>الوسوم (مفصولة بفاصلة)</label><input type="text" id="prj-tags-${i}" value="${p.tags||''}" style="direction:ltr"></div>
+      </div>
+    </div>`).join('');
+}
+
+function cmsDeleteProject(i) {
+  const prjs = cmsData.projectsData || projects.map(p => ({...p, tags: p.tags.join(',')}));
+  prjs.splice(i,1);
+  cmsData.projectsData = prjs; saveCmsData();
+  renderProjectsEditor();
+}
+
+function cmsAddProject() {
+  const prjs = cmsData.projectsData || projects.map(p => ({...p, tags: p.tags.join(',')}));
+  prjs.push({ title:'مشروع جديد', cat:'هوية بصرية', desc:'وصف المشروع', client:'اسم العميل', services:'الخدمات', year:'2025', duration:'شهران', bg:'linear-gradient(135deg,#1a1a2e,#0f3460)', tags:'هوية' });
+  cmsData.projectsData = prjs; saveCmsData();
+  renderProjectsEditor();
+}
+
+function cmsApplyProjects() {
+  const count = document.querySelectorAll('[id^="prj-title-"]').length;
+  const updated = Array.from({length: count}, (_, i) => ({
+    id: i,
+    title: getValue(`prj-title-${i}`),
+    cat: getValue(`prj-cat-${i}`),
+    desc: getValue(`prj-desc-${i}`),
+    client: getValue(`prj-client-${i}`),
+    services: getValue(`prj-services-${i}`),
+    year: getValue(`prj-year-${i}`),
+    duration: getValue(`prj-dur-${i}`),
+    bg: getValue(`prj-bg-${i}`),
+    tags: getValue(`prj-tags-${i}`).split(',').map(t=>t.trim()),
+    galleryBgs: projects[i]?.galleryBgs || ['linear-gradient(135deg,#1a1a2e,#0f3460)'],
+    stats: projects[i]?.stats || [],
+  }));
+
+  // Update section title
+  const t1 = getValue('port-title1'), t2 = getValue('port-title2');
+  const stEl = document.querySelector('#portfolio .section-title');
+  if (stEl) stEl.innerHTML = `${t1}<br>${t2}`;
+  cmsData.portfolio = { title1: t1, title2: t2 };
+
+  // Update global projects array
+  projects.length = 0;
+  updated.forEach(p => projects.push(p));
+  cmsData.projectsData = updated.map(p => ({...p, tags: p.tags.join(',')}));
+  saveCmsData();
+
+  // Re-render portfolio grid (first 4)
+  const grid = document.querySelector('.portfolio-grid');
+  if (grid) {
+    grid.innerHTML = projects.slice(0, 4).map((p, i) => `
+      <div class="project-card reveal${i>0?' reveal-delay-'+i:''}" onclick="showProjectDetail(${p.id})">
+        <div class="project-bg" style="background:${p.bg}"></div>
+        <div class="project-overlay">
+          <div class="project-cat">${p.cat}</div>
+          <div class="project-title">${p.title}</div>
+          <div class="project-link">استعراض المشروع →</div>
+        </div>
+      </div>`).join('');
+  }
+  showToast('✓ تم تحديث المشاريع');
+}
+
+// ════════════════ SOCIAL MEDIA ════════════════
+function renderSocialProjectsEditor() {
+  const el = document.getElementById('social-projects-editor');
+  if (!el) return;
+  el.innerHTML = socialProjects.map((p, i) => `
+    <div class="social-proj-item" id="spitem-${i}">
+      <div class="social-proj-item-header" onclick="toggleSocialItem(${i})">
+        <div class="social-proj-color-dot" style="background:${p.coverBg}"></div>
+        <div class="social-proj-item-name">${p.title}</div>
+        <div class="social-proj-item-folder">${p.folder}</div>
+        <div class="social-proj-chevron">▼</div>
+      </div>
+      <div class="social-proj-item-body">
+        <div class="cms-row">
+          <div class="cms-field"><label>اسم المشروع</label><input type="text" id="sp-title-${i}" value="${p.title}"></div>
+          <div class="cms-field"><label>الفئة / النوع</label><input type="text" id="sp-cat-${i}" value="${p.cat}"></div>
+        </div>
+        <div class="cms-field"><label>الوصف</label><textarea id="sp-desc-${i}">${p.desc}</textarea></div>
+        <div class="cms-row">
+          <div class="cms-field"><label>مسار المجلد</label><input type="text" id="sp-folder-${i}" value="${p.folder}" style="direction:ltr"></div>
+          <div class="cms-field"><label>عدد التصاميم المتوقع</label><input type="number" id="sp-count-${i}" value="${p.count}"></div>
+        </div>
+        <div class="cms-field"><label>لون الخلفية (CSS gradient)</label><input type="text" id="sp-bg-${i}" value="${p.coverBg}" style="direction:ltr;font-size:12px"></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+          <button class="cms-delete-btn" onclick="cmsDeleteSocialProject(${i})">حذف المشروع</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSocialItem(i) {
+  const el = document.getElementById(`spitem-${i}`);
+  if (el) el.classList.toggle('open');
+}
+
+function cmsDeleteSocialProject(i) {
+  socialProjects.splice(i, 1);
+  if (!cmsData.socialProjects) cmsData.socialProjects = [];
+  cmsData.socialProjects = socialProjects.map(p => ({...p}));
+  saveCmsData();
+  renderSocialProjectsEditor();
+}
+
+function cmsAddSocialProject() {
+  const newProj = {
+    id: `sm-${socialProjects.length}`,
+    title: 'مشروع سوشيال جديد',
+    cat: 'سوشيال ميديا',
+    desc: 'وصف المشروع.',
+    coverBg: 'linear-gradient(135deg,#1a1a2e,#0f3460)',
+    folder: `pictures/nofa${socialProjects.length + 1}`,
+    count: 6,
+  };
+  socialProjects.push(newProj);
+  renderSocialProjectsEditor();
+  // scroll to new
+  setTimeout(() => {
+    const el = document.getElementById(`spitem-${socialProjects.length-1}`);
+    if (el) { el.scrollIntoView({behavior:'smooth'}); el.classList.add('open'); }
+  }, 100);
+}
+
+function cmsApplySocial() {
+  const count = socialProjects.length;
+  // Update section header
+  const t1 = getValue('social-title1'), t2 = getValue('social-title2'), desc = getValue('social-desc');
+  const st = document.querySelector('#social-designs .section-title');
+  if (st) st.innerHTML = `${t1}<br>${t2}`;
+  const descEl = document.querySelector('#social-designs p');
+  if (descEl) descEl.textContent = desc;
+  cmsData.socialSection = { title1: t1, title2: t2, desc };
+
+  // Update each project
+  Array.from({length: count}, (_, i) => {
+    if (!socialProjects[i]) return;
+    socialProjects[i].title   = getValue(`sp-title-${i}`) || socialProjects[i].title;
+    socialProjects[i].cat     = getValue(`sp-cat-${i}`)   || socialProjects[i].cat;
+    socialProjects[i].desc    = getValue(`sp-desc-${i}`)  || socialProjects[i].desc;
+    socialProjects[i].folder  = getValue(`sp-folder-${i}`)|| socialProjects[i].folder;
+    socialProjects[i].count   = parseInt(getValue(`sp-count-${i}`))||6;
+    socialProjects[i].coverBg = getValue(`sp-bg-${i}`)    || socialProjects[i].coverBg;
+  });
+
+  cmsData.socialProjects = socialProjects.map(p => ({...p}));
+  saveCmsData();
+
+  // Re-render social grid
+  renderSocialGrid();
+  showToast('✓ تم تحديث سوشيال ميديا');
+}
+
+function renderSocialGrid() {
+  const grid = document.getElementById('socialGrid');
+  if (!grid) return;
+  grid.innerHTML = socialProjects.map((p, idx) => `
+    <div class="social-card reveal" style="transition-delay:${(idx%4)*0.08}s" onclick="openSocialLightbox(${idx})" id="social-card-${idx}">
+      <div class="social-card-bg" style="background:${p.coverBg}" id="social-card-bg-${idx}"></div>
+      <div class="social-card-overlay">
+        <div class="social-card-client">${p.cat}</div>
+        <div class="social-card-title">${p.title}</div>
+        <div class="social-card-count" id="social-card-count-${idx}">${p.count} تصميم</div>
+      </div>
+      <div class="social-card-zoom-icon">⊕</div>
+    </div>`).join('');
+  // مراقبة البطاقات الجديدة بعد الرندر
+  grid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  socialProjects.forEach(async (p, idx) => {
+    const cover = await probeImage(`${p.folder}/1.png`);
+    if (cover) {
+      const bgEl = document.getElementById(`social-card-bg-${idx}`);
+      if (bgEl) bgEl.style.cssText = `background:${p.coverBg};background-image:url('${cover}');background-size:cover;background-position:center;`;
+    }
+    const imgs = await discoverImages(p.folder, p.count);
+    if (imgs.length > 0) {
+      const countEl = document.getElementById(`social-card-count-${idx}`);
+      if (countEl) countEl.textContent = `${imgs.length} تصميم`;
+    }
+  });
+}
+
+// ════════════════ CONTACT ════════════════
+function cmsApplyContact() {
+  const c = {
+    title1: getValue('contact-title1'),
+    title2: getValue('contact-title2'),
+    text: getValue('contact-text'),
+    email: getValue('contact-email'),
+    phone: getValue('contact-phone'),
+    location: getValue('contact-location'),
+  };
+  cmsData.contact = c; saveCmsData();
+  const tagline = document.querySelector('.contact-tagline');
+  if (tagline) tagline.innerHTML = `${c.title1}<br>لمشروع <span class="highlight">${c.title2}</span>`;
+  const texts = document.querySelectorAll('#contact .about-text');
+  if (texts[0]) texts[0].textContent = c.text;
+  const emailEl = document.querySelector('a[href^="mailto"]');
+  if (emailEl) { emailEl.href = `mailto:${c.email}`; emailEl.childNodes[emailEl.childNodes.length-1].textContent = c.email; }
+  const phoneEl = document.querySelector('a[href^="tel"]');
+  if (phoneEl) { phoneEl.href = `tel:${c.phone.replace(/\s/g,'')}`; phoneEl.childNodes[phoneEl.childNodes.length-1].textContent = c.phone; }
+  showToast('✓ تم تحديث التواصل');
+}
+
+// ════════════════ FOOTER ════════════════
+function cmsApplyFooter() {
+  const f = {
+    logo: getValue('footer-logo'),
+    tagline: getValue('footer-tagline'),
+    copy: getValue('footer-copy'),
+    ig: getValue('footer-ig'),
+    li: getValue('footer-li'),
+    tw: getValue('footer-tw'),
+    be: getValue('footer-be'),
+  };
+  cmsData.footer = f; saveCmsData();
+  const logoEl = document.querySelector('.footer-logo');
+  if (logoEl) logoEl.textContent = f.logo;
+  const tagEl = document.querySelector('.footer-tagline');
+  if (tagEl) tagEl.textContent = f.tagline;
+  const copyEl = document.querySelector('.footer-copy');
+  if (copyEl) copyEl.textContent = f.copy;
+  const socials = document.querySelectorAll('.footer-social');
+  const links = [f.li, f.tw, f.be, f.ig];
+  socials.forEach((a, i) => { if (links[i]) a.href = links[i]; });
+  showToast('✓ تم تحديث الفوتر');
+}
+
+// ════════════════ AUTO-APPLY SAVED DATA ON PAGE LOAD ════════════════
+function applySavedCmsData() {
+  const d = cmsData;
+  if (!d || Object.keys(d).length === 0) return;
+  // Apply hero
+  if (d.hero) {
+    const h = d.hero;
+    const h1 = document.querySelector('.hero-headline');
+    if (h1) {
+      const lines = h1.querySelectorAll('.line');
+      if (lines[0]) lines[0].textContent = h.line1;
+      if (lines[1]) lines[1].innerHTML = `<em class="accent-word">${h.line2accent}</em> <span class="gold-word">${h.line2gold}</span>`;
+      if (lines[2]) lines[2].textContent = h.line3;
+    }
+    const badge = document.querySelector('.hero-badge');
+    if (badge) badge.innerHTML = `<span class="hero-badge-dot"></span>${h.badge}`;
+    const sub = document.querySelector('.hero-sub');
+    if (sub) sub.textContent = h.sub;
+    const btns = document.querySelectorAll('.hero-buttons button');
+    if (btns[0]) btns[0].textContent = h.btn1;
+    if (btns[1]) btns[1].textContent = h.btn2;
+  }
+  // Apply about floats
+  if (d.about) {
+    const a = d.about;
+    const stEl = document.querySelector('#about .section-title');
+    if (stEl && a.title) stEl.innerHTML = a.title.split('|').join('<br>');
+    const textEl = document.querySelector('.about-text');
+    if (textEl && a.text) textEl.innerHTML = a.text.replace(/\n/g,'<br>');
+    const listEl = document.querySelector('.about-list');
+    if (listEl && a.list) listEl.innerHTML = a.list.map(li=>`<li>${li}</li>`).join('');
+    const f1l=document.querySelector('.about-card-float-1 .about-float-label');
+    const f1v=document.querySelector('.about-card-float-1 .about-float-value');
+    const f1s=document.querySelector('.about-card-float-1 .about-float-sub');
+    if(f1l&&a.float1label) f1l.textContent=a.float1label;
+    if(f1v&&a.float1val) f1v.textContent=a.float1val;
+    if(f1s&&a.float1sub) f1s.textContent=a.float1sub;
+    const f2l=document.querySelector('.about-card-float-2 .about-float-label');
+    const f2v=document.querySelector('.about-card-float-2 .about-float-value');
+    const f2s=document.querySelector('.about-card-float-2 .about-float-sub');
+    if(f2l&&a.float2label) f2l.textContent=a.float2label;
+    if(f2v&&a.float2val) f2v.textContent=a.float2val;
+    if(f2s&&a.float2sub) f2s.textContent=a.float2sub;
+  }
+  // Apply contact
+  if (d.contact) {
+    const c = d.contact;
+    const tagline = document.querySelector('.contact-tagline');
+    if (tagline) tagline.innerHTML = `${c.title1}<br>لمشروع <span class="highlight">${c.title2}</span>`;
+    const emailEl = document.querySelector('a[href^="mailto"]');
+    if (emailEl && c.email) { emailEl.href=`mailto:${c.email}`; emailEl.childNodes[emailEl.childNodes.length-1].textContent=c.email; }
+    const phoneEl = document.querySelector('a[href^="tel"]');
+    if (phoneEl && c.phone) { phoneEl.href=`tel:${c.phone.replace(/\s/g,'')}`; phoneEl.childNodes[phoneEl.childNodes.length-1].textContent=c.phone; }
+  }
+  // Apply footer
+  if (d.footer) {
+    const f = d.footer;
+    const logoEl=document.querySelector('.footer-logo');
+    if(logoEl&&f.logo) logoEl.textContent=f.logo;
+    const tagEl=document.querySelector('.footer-tagline');
+    if(tagEl&&f.tagline) tagEl.textContent=f.tagline;
+    const copyEl=document.querySelector('.footer-copy');
+    if(copyEl&&f.copy) copyEl.textContent=f.copy;
+  }
+  // Apply social projects from saved data
+  if (d.socialProjects && d.socialProjects.length > 0) {
+    socialProjects.length = 0;
+    d.socialProjects.forEach(p => socialProjects.push(p));
+  }
+  // Apply projects
+  if (d.projectsData && d.projectsData.length > 0) {
+    const saved = d.projectsData;
+    projects.length = 0;
+    saved.forEach((p, i) => projects.push({
+      ...p, id:i, tags: typeof p.tags==='string' ? p.tags.split(',').map(t=>t.trim()) : p.tags,
+      galleryBgs: p.galleryBgs || ['linear-gradient(135deg,#1a1a2e,#0f3460)'],
+      stats: p.stats || [],
+    }));
+  }
+}
+
+// تشغيل أولي من localStorage
+applySavedCmsData();
+
+// تحميل البيانات من Supabase لكل زائر عند فتح الصفحة
+_cmsLoad();
 </script>
 </body>
 </html>
